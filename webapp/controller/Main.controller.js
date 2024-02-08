@@ -28,6 +28,22 @@ sap.ui.define([
         return Controller.extend("zuipurallow.controller.Main", {
             onInit: function () {
                 me = this;
+                this._aColumns = {};
+                this._aDataBeforeChange = [];
+                this._validationErrors = [];
+                this._bHdrChanged = false;
+                this._bDtlChanged = false;
+                this._dataMode = "READ";
+                this._aColFilters = [];
+                this._aColSorters = [];
+                this._aMultiFiltersBeforeChange = [];
+                this._aFilterableColumns = {};
+                this._sActiveTable = "headerTab";
+                this._oModel = this.getOwnerComponent().getModel();
+                this._tableValueHelp = TableValueHelp;
+                this._tableFilter = TableFilter;
+                this._smartFilterCustomControl = SmartFilterCustomControl;
+                this._colFilters = {};
                 SmartFilterCustomControl.setSmartFilterModel(this);
             },
             //******************************************* */

@@ -41,7 +41,39 @@
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration2" key="Mattyp" label="{ddtext>/MATTYP}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
                             <smartfilterbar:customControl>
-                                <MultiInput id="sffMattyp" name="mattyp" maxSuggestionWidth="400px" />
+                                <MultiInput id="sffMattyp" name="Mattyp" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration3" key="Custgrp" label="{ddtext>/CUSTGRP}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffCustgrp" name="Custgrp" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration4" key="Plantcd" label="{ddtext>/PLANTCD}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffPlantcd" name="Plantcd" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration5" key="Vendorcd" label="{ddtext>/VENDORCD}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffVendorcd" name="Vendorcd" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration6" key="Uom" label="{ddtext>/UOM}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffUom" name="Uom" maxSuggestionWidth="400px" />
                             </smartfilterbar:customControl>
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>

@@ -165,7 +165,7 @@ sap.ui.define([
                 showSearchButton: false
             });
 
-            this._oSmartFilterCustomControlValueHelpDialog = sap.ui.xmlfragment("zuicostcnfg.view.fragments.valuehelp.SmartFilterCustomControlValueHelpDialog", this);
+            this._oSmartFilterCustomControlValueHelpDialog = sap.ui.xmlfragment("zuipurallow.view.fragments.valuehelp.SmartFilterCustomControlValueHelpDialog", this);
             this.getView().addDependent(this._oSmartFilterCustomControlValueHelpDialog);
 
             this._oSmartFilterCustomControlValueHelpDialog.setRangeKeyFields([{
