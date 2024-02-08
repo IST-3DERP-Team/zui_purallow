@@ -23,7 +23,7 @@
                     beforeVariantFetch="beforeVariantFetch" afterVariantLoad="afterVariantLoad" clear="clearSmartFilters">
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SBU" label="{ddtext>/SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration1" key="SBU" label="{ddtext>/SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
                             <smartfilterbar:customControl>
                                 <ComboBox id="cboxSBU"
                                     selectedKey="{ui>/sbu}"
@@ -32,16 +32,16 @@
                                         path: '/ZVB_3DERP_SBU_SH',
                                         templateShareable: false
                                     }">
-                                    <core:Item key="{SBU}" text="{SBU}" />
+                                    <core:Item id="_IDGenItem1" key="{SBU}" text="{SBU}" />
                                 </ComboBox>                                  
                             </smartfilterbar:customControl>
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="Mattyp" label="{ddtext>/COSTCOMPCD}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration2" key="Mattyp" label="{ddtext>/MATTYP}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
                             <smartfilterbar:customControl>
-                                <MultiInput id="sffMattyp" name="Mattyp" maxSuggestionWidth="400px" />
+                                <MultiInput id="sffMattyp" name="mattyp" maxSuggestionWidth="400px" />
                             </smartfilterbar:customControl>
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>

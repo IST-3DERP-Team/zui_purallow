@@ -30,11 +30,11 @@ server:
       configuration:
         ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
         backend:
-          - path: /sap
+          - path: /sap/opu/odata/sap/ZGW_3DERP_PURALLOW_SRV/
             url: http://190.92.230.65:8000
             client: '888'
             destination: LTD888_S4HANA2022
-          - path: /sap
+          - path: /sap/opu/odata/sap/ZVB_3DERP_PURALLOW_FILTER_CDS
             url: http://190.92.230.65:8000
             client: '888'
             destination: LTD888_S4HANA2022

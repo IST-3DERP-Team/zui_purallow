@@ -16,11 +16,11 @@ server:
             - /test-resources
           url: https://ui5.sap.com
         backend:
-          - path: /sap
+          - path: /sap/opu/odata/sap/ZGW_3DERP_PURALLOW_SRV/
             url: http://190.92.230.65:8000
             client: '888'
             destination: LTD888_S4HANA2022
-          - path: /sap
+          - path: /sap/opu/odata/sap/ZVB_3DERP_PURALLOW_FILTER_CDS
             url: http://190.92.230.65:8000
             client: '888'
             destination: LTD888_S4HANA2022
