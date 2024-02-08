@@ -1,0 +1,56 @@
+<mvc:View controllerName="zuipurallow.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    displayBlock="true"
+    xmlns="sap.m"
+    height="100%"
+    xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
+    xmlns:uiL="sap.ui.layout"
+    xmlns:uiT="sap.ui.table">
+    <Page id="page" enableScrolling="false" class="sapUiNoContentPadding" showHeader="false">
+        <!-- <dependents>
+            <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
+            <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
+            <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
+            <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
+            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" />
+            <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".refreshData" />
+            <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".copyData" />
+        </dependents> -->
+        <content>
+            <VBox id="VBox1" fitContainer="true" class="sidePadding">
+                <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_PURALLOW_FILTER" search="onSearch" persistencyKey="3DERP_CCPKey" filterContainerWidth="15rem" showClearOnFB="true"
+                    beforeVariantFetch="beforeVariantFetch" afterVariantLoad="afterVariantLoad" clear="clearSmartFilters">
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration key="SBU" label="{ddtext>/SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
+                            <smartfilterbar:customControl>
+                                <ComboBox id="cboxSBU"
+                                    selectedKey="{ui>/sbu}"
+                                    change="onSBUChange"
+                                    items="{
+                                        path: '/ZVB_3DERP_SBU_SH',
+                                        templateShareable: false
+                                    }">
+                                    <core:Item key="{SBU}" text="{SBU}" />
+                                </ComboBox>                                  
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration key="Mattyp" label="{ddtext>/COSTCOMPCD}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffMattyp" name="Mattyp" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+
+                    <smartfilterbar:layoutData>
+                        <FlexItemData id="_IDGenFlexItemData1" growFactor="0"/>
+                    </smartfilterbar:layoutData>
+                </smartfilterbar:SmartFilterBar>
+            </VBox>
+        </content >
+    </Page>
+</mvc:View>
