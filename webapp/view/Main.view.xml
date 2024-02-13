@@ -38,6 +38,14 @@
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
+                    <!-- <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration1" key="SBU" label="{ddtext>/SBU}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                            <smartfilterbar:customControl>
+                                <MultiInput id="sffSBU" name="SBU" maxSuggestionWidth="400px" />
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration> -->
+
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration2" key="Mattyp" label="{ddtext>/MATTYP}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
                             <smartfilterbar:customControl>
@@ -109,7 +117,7 @@
                                     </uiT:rowSettingsTemplate>
                                     <uiT:extension>
                                         <OverflowToolbar>
-                                            <Text text="{counts>/header} Component/s" class="selHdrKeyFontStyle" />
+                                            <Text text="{counts>/header} Row/s" class="selHdrKeyFontStyle" />
                                             <ToolbarSpacer/>
                                             <SearchField
                                                 id="searchFieldHdr"

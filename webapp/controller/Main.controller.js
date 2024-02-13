@@ -68,7 +68,9 @@ sap.ui.define([
                     dataWrap: {
                         headerTab: false,
                         detailTab: false
-                    }
+                    },
+                    DisplayMode: "change",
+                    sbu: ""
                 }), "ui");
 
                 this._counts = {
@@ -168,20 +170,60 @@ sap.ui.define([
                 // this.byId("detailTab").addEventDelegate(oTableEventDelegate);
                 this.getColumnProp();
 
-                this.getHeaderData();
+                // this.getHeaderData();
 
-                // this._oModel.read('/PlantVHSet', {
+                // this._oModel.read('/CompanyVHSet', {
                 //     async: false,
                 //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                //         me.getView().setModel(new JSONModel(oData.results), "COMPANY_MODEL");
                 //     },
                 //     error: function (err) { }
                 // })
 
-                // this._oModel.read('/CustGrpVHSet', {
+                this._oModel.read('/PlantVHSet', {
+                    async: false,
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                // this._oModel.read('/ComponentVHSet', {
                 //     async: false,
                 //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                //         me.getView().setModel(new JSONModel(oData.results), "COMPONENT_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/SalesTermVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "SALESTERM_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                this._oModel.read('/CustGrpVHSet', {
+                    async: false,
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                // this._oModel.read('/WeaveTypeVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "WVTYP_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/StatusVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "STATUS_MODEL");
                 //     },
                 //     error: function (err) { }
                 // })
@@ -228,6 +270,20 @@ sap.ui.define([
             onSearch: function () {
                 // var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
                 // this.getView().getModel("ui").setProperty("/currsbu", vSBU);
+                //SBU as Combobox
+                if (this.getView().byId("cboxSBU") !== undefined) {
+                    this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                    // console.log(this._sbu);
+                } else {
+                    //SBU as DropdownList
+                    this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                    // console.log(this._sbu);
+                }
+
+                this.getView().getModel("ui").setProperty("/sbu", this._sbu);
+
+                this.getColumnProp();
+
                 this.getHeaderData();
             },
 
@@ -433,8 +489,8 @@ sap.ui.define([
                     if (sColumnWidth === 0) sColumnWidth = 100; 
 
                     var oText = new sap.m.Text({
-                        wrapping: sTextWrapping === "X" ? true : false,
-                        tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}",
+                        wrapping: sTextWrapping === "X" ? true : false
+                        // , tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}",
                         // width: (+sColumnWidth-15) + "px"
                     })
 
@@ -697,6 +753,40 @@ sap.ui.define([
                 //         }, 10);
                 //     });
                 // });
+            },
+
+            onKeyUp(oEvent) {
+                if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
+                    var oTable = this.byId(oEvent.srcControl.sId).oParent;
+
+                    if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
+                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
+
+                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                        oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        })
+                    }
+
+                    if (oTable.getId().indexOf("headerTab") >= 0) {
+                        // var oTableDetail = this.byId("detailTab");
+                        // var oColumns = oTableDetail.getColumns();
+
+                        // for (var i = 0, l = oColumns.length; i < l; i++) {
+                        //     if (oColumns[i].getSorted()) {
+                        //         oColumns[i].setSorted(false);
+                        //     }
+                        // }
+                    }
+                }
+                else if (oEvent.key === "Enter" && oEvent.srcControl.sParentAggregationName === "cells") {
+                    if (this._dataMode === "NEW") this.onAddNewRow();
+                }               
             },
 
             onAfterTableRendering: function (oEvent) {
