@@ -51,6 +51,15 @@
                     "localUri": "localService/ZGW_3DERP_COMMON_SRV/metadata.xml",
                     "odataVersion": "2.0"
                 }
+            },
+            "ZGW_3DERP_COSTCNFG_SRV": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_COSTCNFG_SRV",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "localUri": "localService/ZGW_3DERP_COSTCNFG_SRV/metadata.xml",
+                    "odataVersion": "2.0"
+                }
             }
         }
     },
@@ -115,6 +124,18 @@
             },
             "ZGW_3DERP_COMMON_SRV": {
                 "dataSource": "ZGW_3DERP_COMMON_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false,
+                    "metadataUrlParams": {
+                        "sap-value-list": "none"
+                    }
+                }
+            },
+            "ZGW_3DERP_COSTCNFG_SRV": {
+                "dataSource": "ZGW_3DERP_COSTCNFG_SRV",
                 "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",
