@@ -70,7 +70,7 @@ sap.ui.define([
 
         openLoadingDialog: function(doc) {
 			if (!doc._LoadingDialog) {
-				doc._LoadingDialog = sap.ui.xmlfragment("zuicostcnfg.view.fragments.dialog.LoadingDialog", doc);
+				doc._LoadingDialog = sap.ui.xmlfragment("zuipurallow.view.fragments.dialog.LoadingDialog", doc);
 				doc.getView().addDependent(doc._LoadingDialog);
 			}
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", doc.getView(), doc._LoadingDialog);
@@ -83,7 +83,7 @@ sap.ui.define([
 
         openProcessingDialog(doc, msg) {
             if (!doc._ProcessingDialog) {
-                doc._ProcessingDialog = sap.ui.xmlfragment("zuicostcnfg.view.fragments.dialog.ProcessingDialog", doc);
+                doc._ProcessingDialog = sap.ui.xmlfragment("zuipurallow.view.fragments.dialog.ProcessingDialog", doc);
                 doc.getView().addDependent(doc._ProcessingDialog);
             }
             jQuery.sap.syncStyleClass("sapUiSizeCompact", doc.getView(), doc._ProcessingDialog);
