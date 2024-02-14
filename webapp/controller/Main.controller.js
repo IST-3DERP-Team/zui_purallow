@@ -24,6 +24,7 @@ sap.ui.define([
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
         var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "YYYY-MM-dd" });
         var sapDateFormat2 = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyyMMdd" });
+        var timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({ pattern: "KK:mm:ss a" });
 
         return Controller.extend("zuipurallow.controller.Main", {
             onInit: function () {
@@ -95,44 +96,64 @@ sap.ui.define([
                 var oDDTextParam = [], oDDTextResult = {};
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
 
+                //TABLE - INPUT LABELS
                 oDDTextParam.push({CODE: "SBU"});
+                oDDTextParam.push({CODE: "MATTYP"});
+                oDDTextParam.push({CODE: "SEQ"});
+                oDDTextParam.push({CODE: "CUSTGRP"});
+                oDDTextParam.push({CODE: "PLANTCD"});
+                oDDTextParam.push({CODE: "VENDORCD"});
+                oDDTextParam.push({CODE: "UOM"});
+                oDDTextParam.push({CODE: "QTYFROM"});
+                oDDTextParam.push({CODE: "QTYTO"});
+                oDDTextParam.push({CODE: "PCTALLOW"});
+                oDDTextParam.push({CODE: "QTYALLOW"});
+                oDDTextParam.push({CODE: "MINALWQTY"});
+                oDDTextParam.push({CODE: "MAXALWQTY"});
+                oDDTextParam.push({CODE: "EFFDTFROM"});
+                oDDTextParam.push({CODE: "EFFDTTO"});
+                oDDTextParam.push({CODE: "PRIOSEQ"});
+                oDDTextParam.push({CODE: "PURALEDIT"});
+                oDDTextParam.push({CODE: "REMARKS"}); 
+                oDDTextParam.push({CODE: "CREATEDBY"}); 
+                oDDTextParam.push({CODE: "CREATEDDT"}); 
+                oDDTextParam.push({CODE: "UPDATEDBY"}); 
+                oDDTextParam.push({CODE: "UPDATEDDT"}); 
+
+                //INFO LABELS
                 oDDTextParam.push({CODE: "INFO_NO_RECORD_TO_PROC"});
                 oDDTextParam.push({CODE: "INFO_NO_SEL_RECORD_TO_PROC"});
                 oDDTextParam.push({CODE: "INFO_NO_LAYOUT"});
                 oDDTextParam.push({CODE: "INFO_LAYOUT_SAVE"});
-                oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"});
-                oDDTextParam.push({CODE: "CONFIRM_DISREGARD_CHANGE"});
+                oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"});                
                 oDDTextParam.push({CODE: "INFO_SEL_RECORD_TO_DELETE"});  
-                oDDTextParam.push({CODE: "INFO_DATA_DELETED"});  
-                oDDTextParam.push({CODE: "CONF_DELETE_RECORDS"});  
+                oDDTextParam.push({CODE: "INFO_DATA_DELETED"});                  
                 oDDTextParam.push({CODE: "INFO_ERROR"});
                 oDDTextParam.push({CODE: "INFO_NO_DATA_SAVE"});
                 oDDTextParam.push({CODE: "INFO_DATA_SAVE"});
                 oDDTextParam.push({CODE: "INFO_NO_DATA_EDIT"});
                 oDDTextParam.push({CODE: "INFO_CHECK_INVALID_ENTRIES"});
+                oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"}); 
+                oDDTextParam.push({CODE: "INFO_NO_DATA_MODIFIED"}); 
+                oDDTextParam.push({CODE: "INFO_DATA_COPIED"}); 
+
+                //CONFIRM DIALOG LABELS
+                oDDTextParam.push({CODE: "CONFIRM_DISREGARD_CHANGE"});
+                oDDTextParam.push({CODE: "CONF_DELETE_RECORDS"});  
+
+                //BUTTONS - FUNCTIONS LABELS
                 oDDTextParam.push({CODE: "ADD"});
                 oDDTextParam.push({CODE: "EDIT"});
                 oDDTextParam.push({CODE: "SAVE"});
                 oDDTextParam.push({CODE: "CANCEL"});
                 oDDTextParam.push({CODE: "DELETE"});
                 oDDTextParam.push({CODE: "REFRESH"});
-                oDDTextParam.push({CODE: "COPY"});
-                oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"}); 
-                oDDTextParam.push({CODE: "INFO_NO_DATA_MODIFIED"}); 
-                oDDTextParam.push({CODE: "INFO_DATA_COPIED"}); 
-                oDDTextParam.push({CODE: "COSTCOMPCD"}); 
-                oDDTextParam.push({CODE: "EFFECTDT"}); 
-                oDDTextParam.push({CODE: "COMPDESC"}); 
-                oDDTextParam.push({CODE: "COMPANYCD"}); 
-                oDDTextParam.push({CODE: "DESCRIPTION"}); 
-                oDDTextParam.push({CODE: "PLANTCD"}); 
-                oDDTextParam.push({CODE: "SALESTERM"}); 
-                oDDTextParam.push({CODE: "CUSTGRP"}); 
-                oDDTextParam.push({CODE: "ATTRIBCD"}); 
-                oDDTextParam.push({CODE: "STATUSCD"});
+                oDDTextParam.push({CODE: "COPY"});                
                 oDDTextParam.push({CODE: "SAVELAYOUT"});
                 oDDTextParam.push({CODE: "WRAP"});
                 oDDTextParam.push({CODE: "UNWRAP"});
+                oDDTextParam.push({CODE: "FULLSCREEN"});
+                oDDTextParam.push({CODE: "EXITFULLSCREEN"});
 
                 oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
                     method: "POST",
@@ -298,7 +319,7 @@ sap.ui.define([
                 if (oSmartFilter.length > 0)  {
                     oSmartFilter[0].aFilters.forEach(item => {
                         if (item.aFilters === undefined) {
-                            aFilter.push(new Filter(item.sPath, item.sOperator, item.oValue1));
+                            aFilter.push(new Filter(item.sPath.toUpperCase(), item.sOperator, item.oValue1));
                         }
                         else {
                             aFilters.push(item);
@@ -317,12 +338,12 @@ sap.ui.define([
     
                             if (oCtrl.getTokens().length === 1) {
                                 oCtrl.getTokens().map(function(oToken) {
-                                    aFilters.push(new Filter(item, FilterOperator.EQ, oToken.getKey()))
+                                    aFilters.push(new Filter(item.toUpperCase(), FilterOperator.EQ, oToken.getKey()))
                                 })
                             }
                             else if (oCtrl.getTokens().length > 1) {
                                 oCtrl.getTokens().map(function(oToken) {
-                                    aCustomFilter.push(new Filter(item, FilterOperator.EQ, oToken.getKey()))
+                                    aCustomFilter.push(new Filter(item.toUpperCase(), FilterOperator.EQ, oToken.getKey()))
                                 })
     
                                 aFilters.push(new Filter(aCustomFilter));
@@ -331,6 +352,7 @@ sap.ui.define([
                     })
                 }
 
+                aFilters.push(new Filter("SBU", FilterOperator.EQ, this._sbu));
                 aSmartFilter.push(new Filter(aFilters, true));
 
                 console.log("aSmartFilter", aSmartFilter);
@@ -341,18 +363,26 @@ sap.ui.define([
                     filters: aSmartFilter,
                     success: function (oData) {
                         if (oData.results.length > 0) {
-                            console.log("HeaderSet", oData);
-                            oData.results.sort((a,b) => (a.SEQ > b.SEQ ? 1 : -1));
+                            // console.log("HeaderSet", oData);
+                            // oData.results.sort((a,b) => (a.SEQ > b.SEQ ? 1 : -1));
+
+                            oData.results.sort(function(a,b) {
+                                return new Date(b.CREATEDDT) - new Date(a.CREATEDDT);
+                            });
 
                             oData.results.forEach((item, index) => {  
-                                if (item.EFFECTDT !== null)
-                                    item.EFFECTDT = dateFormat.format(new Date(item.EFFECTDT));
-
-                                if (item.CREATEDDT !== null)
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+                                if (item.EFFDTFROM !== null)
+                                    item.EFFDTFROM = dateFormat.format(new Date(item.EFFDTFROM));
     
-                                if (item.UPDATEDDT !== null)
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                if (item.EFFDTTO !== null)
+                                    item.EFFDTTO = dateFormat.format(new Date(item.EFFDTTO));
+
+                                if (item.CREATEDDT !== null && item.CREATEDDT !== "  /  /" && item.CREATEDDT !== "") {
+                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT)) + " " + me.formatTimeOffSet(item.CREATEDTM.ms);// + " " + timeFormat.format(new Date(item.CREATEDTM));
+                                }
+                                if (item.UPDATEDDT !== null && item.UPDATEDDT !== "  /  /" && item.UPDATEDDT !== "" && item.UPDATEDDT !== " //  /  /" && item.UPDATEDDT != "  /  /") {
+                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT)) + " " + me.formatTimeOffSet(item.UPDATEDTM.ms);// + " " + timeFormat.format(new Date(item.UPDATEDTM));
+                                }
     
                                 if (index === 0) {
                                     item.ACTIVE = "X";
@@ -753,6 +783,27 @@ sap.ui.define([
                 //         }, 10);
                 //     });
                 // });
+            },
+
+            onRefresh: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.refreshData();
+            },
+
+            refreshData() {
+                if (this._dataMode === "READ") {
+                    this._aColFilters = this.byId(this._sActiveTable).getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(this._sActiveTable).getBinding("rows").aSorters;
+
+                    if (this._sActiveTable === "headerTab") {
+                        this.getHeaderData();
+                    }
+                    else if (this._sActiveTable === "detailTab") {
+                        this.getDetailData(true);
+                    }
+                }
             },
 
             onKeyUp(oEvent) {
@@ -1723,7 +1774,25 @@ sap.ui.define([
                 console.log(oEvent);
             },
 
-            onTableResize: function(oEvent) {
+            onTableResize(arg1, arg2) {
+                if (arg1 === "header") {
+                    if (arg2 === "max") {
+                        this.byId("smartFilterBar").setVisible(false);
+                        this.byId("btnFullScreen").setVisible(false);
+                        this.byId("btnExitFullScreen").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("smartFilterBar").setVisible(true);
+                        this.byId("btnFullScreen").setVisible(true);
+                        this.byId("btnExitFullScreen").setVisible(false);
+                    }
+
+                    this._tableRendered = "IOATTRIBTab";
+                    this._tableRendered = "IOSTATUSTab";
+                }
+            },
+
+            onTableResize_split: function(oEvent) {
                 var oSplitter = this.byId("splitterMain");
                 var oHeaderPane = oSplitter.getRootPaneContainer().getPanes().at(0);
                 var oDetailPane = oSplitter.getRootPaneContainer().getPanes().at(1);
@@ -1917,6 +1986,17 @@ sap.ui.define([
 
             clearSmartFilters: function(oEvent) {
                 SmartFilterCustomControl.clearSmartFilters(this);
-            }  
+            },
+
+            //******************************************* */
+            // Functions
+            //******************************************* */
+
+            formatTimeOffSet(pTime) {
+                let TZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000;
+                return timeFormat.format(new Date(pTime + TZOffsetMs));
+            }
+
+            
         });
     });

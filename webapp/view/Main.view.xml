@@ -167,32 +167,8 @@
                                                 press="onRefresh"
                                                 tooltip="{ddtext>/REFRESH}"
                                                 visible="true"/>
-                                            <Button id="btnFullScreenHdr" 
-                                                icon="sap-icon://full-screen"
-                                                press="onTableResize"
-                                                tooltip="{ddtext>/FULLSCREEN}"
-                                                visible="{= ${ui>/fullscreen/header} === true ? false : true}" >
-                                                <customData>
-                                                    <core:CustomData key="TableId" value="headerTab" />
-                                                    <core:CustomData key="Fullscreen" value="1" />
-                                                    <core:CustomData key="Part" value="header" />
-                                                    <core:CustomData key="HeaderSize" value="100%" />
-                                                    <core:CustomData key="DetailSize" value="0%" />
-                                                </customData>
-                                            </Button>
-                                            <Button id="btnExitFullScreenHdr" 
-                                                icon="sap-icon://exit-full-screen"
-                                                press="onTableResize"
-                                                tooltip="{ddtext>/EXITFULLSCREEN}"
-                                                visible="{ui>/fullscreen/header}" >
-                                                <customData>
-                                                    <core:CustomData key="TableId" value="headerTab" />
-                                                    <core:CustomData key="Fullscreen" value="0" />
-                                                    <core:CustomData key="Part" value="header" />
-                                                    <core:CustomData key="HeaderSize" value="46%" />
-                                                    <core:CustomData key="DetailSize" value="54%" />
-                                                </customData>
-                                            </Button>
+                                            <Button id="btnFullScreen" icon="sap-icon://full-screen" press="onTableResize('header', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                            <Button id="btnExitFullScreen" icon="sap-icon://exit-full-screen" press="onTableResize('header', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />  
                                             <Button id="btnTabLayoutHdr"
                                                 icon="sap-icon://grid" 
                                                 tooltip="{ddtext>/SAVELAYOUT}" 
