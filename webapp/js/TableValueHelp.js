@@ -164,7 +164,7 @@ sap.ui.define([
             // create value help dialog
             if (!this._tableValueHelpDialog) {
                 this._tableValueHelpDialog = sap.ui.xmlfragment(
-                    "zuicostcnfg.view.fragments.valuehelp.TableValueHelpDialog",
+                    "zuipurallow.view.fragments.valuehelp.TableValueHelpDialog",
                     this
                 );
 

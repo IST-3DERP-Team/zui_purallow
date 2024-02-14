@@ -136,6 +136,7 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"}); 
                 oDDTextParam.push({CODE: "INFO_NO_DATA_MODIFIED"}); 
                 oDDTextParam.push({CODE: "INFO_DATA_COPIED"}); 
+                oDDTextParam.push({CODE: "INFO_SBU_REQUIRED"});                
 
                 //CONFIRM DIALOG LABELS
                 oDDTextParam.push({CODE: "CONFIRM_DISREGARD_CHANGE"});
@@ -193,62 +194,6 @@ sap.ui.define([
 
                 // this.getHeaderData();
 
-                // this._oModel.read('/CompanyVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "COMPANY_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
-                this._oModel.read('/PlantVHSet', {
-                    async: false,
-                    success: function (oData) {
-                        me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
-                    },
-                    error: function (err) { }
-                })
-
-                // this._oModel.read('/ComponentVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "COMPONENT_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
-                // this._oModel.read('/SalesTermVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "SALESTERM_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
-                this._oModel.read('/CustGrpVHSet', {
-                    async: false,
-                    success: function (oData) {
-                        me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
-                    },
-                    error: function (err) { }
-                })
-
-                // this._oModel.read('/WeaveTypeVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "WVTYP_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
-                // this._oModel.read('/StatusVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "STATUS_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
                 this.getAppAction();
             }, 
 
@@ -288,6 +233,73 @@ sap.ui.define([
                 }
             },
 
+            onSBUChange: function (oEvent) {
+                alert("onSBUChange");
+                this._sbuChange = true;
+                
+                var me = this;                
+                var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_PURALLOW_FILTER_CDS");      
+
+                // console.log(vSBU, oModel);
+
+                oModel.read("/ZVB_3DERP_PURPLANT_SH", {
+                    success: function (oData, oResponse) {
+                        // var aData = new JSONModel({ results: oData.results });
+                        // me.getView().setModel(oData.results, "PLANT_MODEL");
+                        me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_MATTYPE_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        me.getView().setModel(new JSONModel(oData.results), "MATTYP_MODEL");
+                        // if (oData.results.length > 0) {
+                        //     var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
+                        //     me.getView().setModel(aData, "MATTYP_MODEL");
+                        // }
+                        // else {
+                        //     var aData = new JSONModel({ results: [] });
+                        //     me.getView().setModel(aData, "MATTYP_MODEL");
+                        // }
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_CUSTGRP_SH", {
+
+                    success: function (oData, oResponse) {
+                        // var aData = new JSONModel({ results: oData.results });
+                        // me.getView().setModel(aData.results, "CUSTGRP_MODEL");
+                        me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_VENDOR_SH", {
+                    success: function (oData, oResponse) {
+                        // var aData = new JSONModel({ results: oData.results });
+                        // me.getView().setModel(aData, "VENDOR_MODEL");
+                        me.getView().setModel(new JSONModel(oData.results), "VENDOR_MODEL");
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_UOM_SH", {
+                    success: function (oData, oResponse) {
+                        // var aData = new JSONModel({ results: oData.results });
+                        // me.getView().setModel(aData, "UOM_MODEL");
+                        me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
+                    },
+                    error: function (err) { }
+                });
+
+            },
+
             onSearch: function () {
                 // var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
                 // this.getView().getModel("ui").setProperty("/currsbu", vSBU);
@@ -303,9 +315,78 @@ sap.ui.define([
 
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
 
+                // this.getValueHelp();
+                // console.log(this.getView());
+                // console.log(this.getView().getModel());
+
                 this.getColumnProp();
 
                 this.getHeaderData();
+            },
+
+            getValueHelp() {
+
+                // me.getView().setModel(new JSONModel(me.getView().getModel("sfmCustgrp").getData()), "CUSTGRP_MODEL");
+                this.getView().setModel(new JSONModel(this.getView().getModel("sfmCustgrp").getData()), "CUSTGRP2_MODEL");
+                // var vhModel = this.getOwnerComponent().getModel("ZVB_3DERP_PURALLOW_FILTER_CDS");
+
+                // vhModel.read('/ZVB_3DERP_PURPLANT_SH', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                this._oModel.read('/CustGrpVHSet', {
+                    async: false,
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+
+
+                // this._oModel.read('/ComponentVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "COMPONENT_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/SalesTermVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "SALESTERM_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/CustGrpVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/WeaveTypeVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "WVTYP_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
+
+                // this._oModel.read('/StatusVHSet', {
+                //     async: false,
+                //     success: function (oData) {
+                //         me.getView().setModel(new JSONModel(oData.results), "STATUS_MODEL");
+                //     },
+                //     error: function (err) { }
+                // })
             },
 
             getHeaderData() {
@@ -355,7 +436,7 @@ sap.ui.define([
                 aFilters.push(new Filter("SBU", FilterOperator.EQ, this._sbu));
                 aSmartFilter.push(new Filter(aFilters, true));
 
-                console.log("aSmartFilter", aSmartFilter);
+                // console.log("aSmartFilter", aSmartFilter);
 
                 // this.addDateFilters(aSmartFilter);
 
@@ -448,7 +529,7 @@ sap.ui.define([
                 // var oModel = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_COMMON_SRV/");
                 var vSBU = "VER"; 
 
-                console.log("getDynamicColumns", oModel);
+                // console.log("getDynamicColumns", oModel);
 
                 oModel.setHeaders({
                     sbu: vSBU,
@@ -456,12 +537,12 @@ sap.ui.define([
                     tabname: sTabName
                 });
 
-                console.log("1", oModel.getHeaders());
+                // console.log("1", oModel.getHeaders());
                 oModel.read("/ColumnsSet", {
                     
                     success: function (oData, oResponse) {
-                        console.log("2");
-                        console.log("oData", oData);  
+                        // console.log("2");
+                        // console.log("oData", oData);  
                         if (oData.results.length > 0) {
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
@@ -485,8 +566,8 @@ sap.ui.define([
                         }
                     },
                     error: function (err) {
-                        console.log("3");
-                        console.log("err", err);
+                        // console.log("3");
+                        // console.log("err", err);
                     }
                 });
             },
@@ -533,6 +614,7 @@ sap.ui.define([
                                 { path: sColumnId }
                             ],  
                             formatter: function(sKey) {
+                                // console.log(oColProp[0].ValueHelp["items"].path, me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData());
                                 var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
                                                       
                                 // this.removeStyleClass("green");
@@ -783,6 +865,193 @@ sap.ui.define([
                 //         }, 10);
                 //     });
                 // });
+            },
+            
+            onCloseConfirmDialog: function (oEvent) {
+                if (this._ConfirmDialog.getModel().getData().Action === "update-cancel") {
+                    if (this._sActiveTable === "headerTab") {
+                        this.byId("btnAddHdr").setVisible(true);
+                        this.byId("btnEditHdr").setVisible(true);
+                        this.byId("btnDeleteHdr").setVisible(true);
+                        this.byId("btnRefreshHdr").setVisible(true);
+                        this.byId("btnSaveHdr").setVisible(false);
+                        this.byId("btnCancelHdr").setVisible(false);
+                        // this.byId("btnCopyHdr").setVisible(true);
+                        this.byId("btnAddNewHdr").setVisible(false);
+                        this.byId("btnTabLayoutHdr").setVisible(true);
+                        this.byId("btnDataWrapHdr").setVisible(true);
+                        // this.byId("searchFieldHdr").setVisible(true);
+
+                        // this.byId("btnAddDtl").setEnabled(true);
+                        // this.byId("btnEditDtl").setEnabled(true);
+                        // this.byId("btnDeleteDtl").setEnabled(true);
+                        // this.byId("btnRefreshDtl").setEnabled(true);
+                        // // this.byId("searchFieldDtl").setEnabled(true);
+                        // this.byId("btnTabLayoutDtl").setEnabled(true);
+                        // this.byId("btnDataWrapDtl").setEnabled(true);
+                    }
+                    // else if (this._sActiveTable === "detailTab") {
+                    //     this.byId("btnAddDtl").setVisible(true);
+                    //     this.byId("btnEditDtl").setVisible(true);
+                    //     this.byId("btnDeleteDtl").setVisible(true);
+                    //     this.byId("btnRefreshDtl").setVisible(true);
+                    //     this.byId("btnSaveDtl").setVisible(false);
+                    //     this.byId("btnCancelDtl").setVisible(false);
+                    //     // this.byId("btnCopyDtl").setVisible(false);
+                    //     this.byId("btnAddNewDtl").setVisible(false);
+                    //     // this.byId("searchFieldDtl").setVisible(true);
+                    //     this.byId("btnTabLayoutDtl").setVisible(true);
+                    //     this.byId("btnDataWrapDtl").setVisible(true);
+
+                    //     this.byId("btnAddHdr").setEnabled(true);
+                    //     this.byId("btnEditHdr").setEnabled(true);
+                    //     this.byId("btnDeleteHdr").setEnabled(true);
+                    //     this.byId("btnRefreshHdr").setEnabled(true);
+                    //     this.byId("btnCopyHdr").setEnabled(true);
+                    //     this.byId("btnTabLayoutHdr").setEnabled(true);
+                    //     this.byId("btnDataWrapHdr").setEnabled(true);
+                    //     // this.byId("searchFieldHdr").setEnabled(true);
+                    // }                    
+
+                    this.byId(this._sActiveTable).getModel().setProperty("/rows", this._aDataBeforeChange);
+                    this.byId(this._sActiveTable).bindRows("/rows");
+
+                    // if (this._aColFilters.length > 0) { this.setColumnFilters(this._sActiveTable); }
+                    if (this._aColSorters.length > 0) { this.setColumnSorters(this._sActiveTable); }
+                    TableFilter.applyColFilters(this._sActiveTable, this);
+                    
+                    this.setRowReadMode();
+                    this._dataMode = "READ";
+                    this.setActiveRowHighlightByTableId(this._sActiveTable);
+                }
+
+                this._ConfirmDialog.close();
+            },
+
+            onCancelConfirmDialog: function (oEvent) {
+                this._ConfirmDialog.close();
+            },
+
+            onDelete: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.deleteData();
+            },
+
+            deleteData() {
+                if (this._dataMode === "READ") {
+                    var oTable = this.byId(this._sActiveTable);
+                    var aSelIndices = oTable.getSelectedIndices();
+                    var oTmpSelectedIndices = [];
+                    var aData = oTable.getModel().getData().rows;
+                    var vEntitySet = "";
+    
+                    if (this._sActiveTable === "headerTab") vEntitySet = "HeaderSet(";
+                    else vEntitySet = "DetailSet(";
+    
+                    this._oModel.setUseBatch(true);
+                    this._oModel.setDeferredGroups(["update"]);
+    
+                    var mParameters = {
+                        "groupId":"update"
+                    }
+    
+                    if (aSelIndices.length > 0) {
+                        aSelIndices.forEach(item => {
+                            oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                        })
+    
+                        aSelIndices = oTmpSelectedIndices;
+   
+                        MessageBox.confirm("Proceed to delete " + aSelIndices.length + " record(s)?", {
+                            actions: ["Yes", "No"],
+                            onClose: function (sAction) {
+                                if (sAction === "Yes") {
+                                    Common.openProcessingDialog(me, "Processing...");
+    
+                                    if (me.byId(me._sActiveTable).getBinding("rows").aFilters.length > 0) {
+                                        me._aColFilters = me.byId(me._sActiveTable).getBinding("rows").aFilters;
+                                    }
+                
+                                    if (me.byId(me._sActiveTable).getBinding("rows").aSorters.length > 0) {
+                                        me._aColSorters = me.byId(me._sActiveTable).getBinding("rows").aSorters;
+                                    }
+
+                                    aSelIndices.forEach(item => {
+                                        var entitySet = vEntitySet;
+                                        var iKeyCount = me._aColumns[me._sActiveTable.replace("Tab","")].filter(col => col.Key === "X").length;
+                                        var itemValue;
+
+                                        me._aColumns[me._sActiveTable.replace("Tab","")].forEach(col => {
+                                            if (col.DataType === "DATETIME") {
+                                                if (col.ColumnName === "EFFECTDT")
+                                                    itemValue = sapDateFormat2.format(new Date(aData.at(item)[col.ColumnName]));
+                                                else 
+                                                    itemValue = sapDateFormat.format(new Date(aData.at(item)[col.ColumnName])) + "T00:00:00";
+                                            } 
+                                            else if (col.DataType === "BOOLEAN") {
+                                                param[col.ColumnName] = aData.at(item)[col.ColumnName] === true ? "X" : "";
+                                            }
+                                            else {
+                                                itemValue = aData.at(item)[col.ColumnName];
+                                            }
+
+                                            if (iKeyCount === 1) {
+                                                if (col.Key === "X")
+                                                    entitySet += "'" + itemValue + "'"
+                                            }
+                                            else if (iKeyCount > 1) {
+                                                if (col.Key === "X") {
+                                                    entitySet += col.ColumnName + "='" + itemValue + "',"
+                                                }
+                                            }
+                                        })
+                    
+                                        if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                        entitySet += ")";
+                    
+                                        // console.log(entitySet);
+                                        // console.log(param);
+                                        me._oModel.remove("/" + encodeURIComponent(entitySet), mParameters);
+                                    })
+                
+                                    me._oModel.submitChanges({
+                                        groupId: "update",
+                                        success: function (oData, oResponse) {
+                                            Common.closeProcessingDialog(me);
+                                            // me.refreshData();
+                                            aSelIndices.sort((a, b) => -1);
+                                            // console.log(aSelIndices)
+
+                                            aSelIndices.forEach(item => {
+                                                aData.splice(item, 1);
+                                            })
+
+                                            // console.log(aData);
+
+                                            me.byId(me._sActiveTable).getModel().setProperty("/rows", aData);
+                                            me.byId(me._sActiveTable).bindRows("/rows");
+
+                                            if (me._aColFilters.length > 0) { me.setColumnFilters(me._sActiveTable); }
+                                            if (me._aColSorters.length > 0) { me.setColumnSorters(me._sActiveTable); }
+
+                                            me.getView().getModel("counts").setProperty("/header", aData.length);
+
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_DELETED"]);
+                                        },
+                                        error: function () {
+                                            Common.closeProcessingDialog(me);
+                                        }
+                                    }) 
+                                }
+                            }                        
+                        })
+                    }   
+                    else {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                    }
+                }          
             },
 
             onRefresh: function (oEvent) {
@@ -1771,7 +2040,7 @@ sap.ui.define([
             },
 
             onKeyDown(oEvent) {           
-                console.log(oEvent);
+                // console.log(oEvent);
             },
 
             onTableResize(arg1, arg2) {
@@ -1911,7 +2180,7 @@ sap.ui.define([
                     ctr++;
                 });
 
-                console.log(oParam)
+                // console.log(oParam)
 
                 //call the layout save
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -1995,8 +2264,1145 @@ sap.ui.define([
             formatTimeOffSet(pTime) {
                 let TZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000;
                 return timeFormat.format(new Date(pTime + TZOffsetMs));
-            }
+            },
 
+
+            //******************************************* */
+            // VIEW Functions
+            //******************************************* */
+
+            setRowReadMode() {
+                var oTable = this.byId(this._sActiveTable);
+                var sColName = "";
+
+                oTable.getColumns().forEach((col, idx) => {
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.value !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
+                    }
+
+                    this._aColumns[this._sActiveTable.replace("Tab","")].filter(item => item.ColumnName === sColName)
+                        .forEach(ci => {
+                            if (ci.TextFormatMode && ci.TextFormatMode !== "" && ci.TextFormatMode !== "Key" && ci.ValueHelp && ci.ValueHelp["items"].text && ci.ValueHelp["items"].value !== ci.ValueHelp["items"].text) {
+                                col.setTemplate(new sap.m.Text({
+                                    text: {
+                                        parts: [  
+                                            { path: sColName }
+                                        ],  
+                                        formatter: function(sKey) {
+                                            // console.log(ci.ValueHelp["items"].path);
+                                            var oValue = me.getView().getModel(ci.ValueHelp["items"].path).getData().filter(v => v[ci.ValueHelp["items"].value] === sKey);
+                                            
+                                            if (oValue && oValue.length > 0) {
+                                                if (ci.TextFormatMode === "Value") {
+                                                    return oValue[0][ci.ValueHelp["items"].text];
+                                                }
+                                                else if (ci.TextFormatMode === "ValueKey") {
+                                                    return oValue[0][ci.ValueHelp["items"].text] + " (" + sKey + ")";
+                                                }
+                                                else if (ci.TextFormatMode === "KeyValue") {
+                                                    return sKey + " (" + oValue[0][ci.ValueHelp["items"].text] + ")";
+                                                }
+                                            }
+                                            else return sKey;
+                                        }
+                                    },
+                                    wrapping: false,
+                                    tooltip: "{" + sColName + "}"
+                                }));
+                            }
+                            else if (ci.DataType === "STRING" || ci.DataType === "DATETIME" || ci.DataType === "NUMBER") {
+                                col.setTemplate(new sap.m.Text({
+                                    text: "{" + sColName + "}",
+                                    wrapping: false,
+                                    tooltip: "{" + sColName + "}"
+                                }));
+                            }
+                            else if (ci.DataType === "BOOLEAN") {
+                                col.setTemplate(new sap.m.Text({
+                                    text: "{" + sColName + "}",
+                                    wrapping: false,
+                                    editable: false
+                                }));
+                            }
+                        })
+
+                    col.getLabel().removeStyleClass("sapMLabelRequired");                        
+                })
+
+                this.byId(this._sActiveTable).getModel().getData().rows.forEach(item => item.EDITED = false);
+            },
+
+            onCreate: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.createData();
+            },
+
+            createData() {
+                if(this._sbu === "" || this._sbu === undefined) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SBU_REQUIRED"])
+                    return;
+                }
+                // alert(this._sActiveTable);
+                if (this._dataMode === "READ") {
+                    if (this._sActiveTable === "headerTab") {
+                        this.byId("btnAddHdr").setVisible(false);
+                        this.byId("btnEditHdr").setVisible(false);
+                        this.byId("btnDeleteHdr").setVisible(false);
+                        this.byId("btnRefreshHdr").setVisible(false);
+                        this.byId("btnSaveHdr").setVisible(true);
+                        this.byId("btnCancelHdr").setVisible(true);
+                        // this.byId("btnCopyHdr").setVisible(false);
+                        this.byId("btnAddNewHdr").setVisible(true);
+                        this.byId("btnTabLayoutHdr").setVisible(false);
+                        this.byId("btnDataWrapHdr").setVisible(false);
+                        // this.byId("searchFieldHdr").setVisible(false);
+
+                        // this.byId("btnAddDtl").setEnabled(false);
+                        // this.byId("btnEditDtl").setEnabled(false);
+                        // this.byId("btnDeleteDtl").setEnabled(false);
+                        // this.byId("btnRefreshDtl").setEnabled(false);
+                        // // this.byId("searchFieldDtl").setEnabled(false);
+                        // this.byId("btnTabLayoutDtl").setEnabled(false);
+                        // this.byId("btnDataWrapDtl").setEnabled(false);
+                    }
+                    // else if (this._sActiveTable === "detailTab") {
+                    //     this.byId("btnAddDtl").setVisible(false);
+                    //     this.byId("btnEditDtl").setVisible(false);
+                    //     this.byId("btnDeleteDtl").setVisible(false);
+                    //     this.byId("btnRefreshDtl").setVisible(false);
+                    //     this.byId("btnSaveDtl").setVisible(true);
+                    //     this.byId("btnCancelDtl").setVisible(true);
+                    //     // this.byId("btnCopyDtl").setVisible(true);
+                    //     this.byId("btnAddNewDtl").setVisible(true);
+                    //     // this.byId("searchFieldDtl").setVisible(false);
+                    //     this.byId("btnTabLayoutDtl").setVisible(false);
+                    //     this.byId("btnDataWrapDtl").setVisible(false);
+
+                    //     this.byId("btnAddHdr").setEnabled(false);
+                    //     this.byId("btnEditHdr").setEnabled(false);
+                    //     this.byId("btnDeleteHdr").setEnabled(false);
+                    //     this.byId("btnRefreshHdr").setEnabled(false);
+                    //     // this.byId("btnCopyHdr").setEnabled(false);
+                    //     this.byId("btnTabLayoutHdr").setEnabled(false);
+                    //     this.byId("btnDataWrapHdr").setEnabled(false);
+                    //     // this.byId("searchFieldHdr").setEnabled(false);
+                    // }
+    
+                    var oTable = this.byId(this._sActiveTable);
+                    this._aDataBeforeChange = jQuery.extend(true, [], oTable.getModel().getData().rows);
+                    this._validationErrors = [];
+    
+                    if (oTable.getBinding("rows").aFilters.length > 0) {
+                        this._aColFilters = jQuery.extend(true, [], oTable.getBinding("rows").aFilters);
+                        // this._aColFilters = oTable.getBinding("rows").aFilters;
+                        oTable.getBinding("rows").aFilters = [];
+                    }
+
+                    if (oTable.getBinding("rows").aSorters.length > 0) {                        
+                        this._aColSorters = jQuery.extend(true, [], oTable.getBinding("rows").aSorters);
+                    }
+                    
+                    var oColumns = oTable.getColumns();
+
+                    for (var i = 0, l = oColumns.length; i < l; i++) {
+                        var isFiltered = oColumns[i].getFiltered();
+    
+                        if (isFiltered) {
+                            oColumns[i].filter("");
+                        }
+                    }
+
+                    this.setRowCreateMode();
+                    // sap.ushell.Container.setDirtyFlag(true);
+                }
+            },
+
+            setRowCreateMode() {
+                var oTable = this.byId(this._sActiveTable);
+                var aNewRow = [];
+                var oNewRow = {};  
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+                    var oValueHelp = false;
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+
+                    this._aColumns[this._sActiveTable.replace("Tab","")].filter(item => item.ColumnName === sColName)
+                        .forEach(ci => {
+                            if (ci.Editable || ci.Creatable) {
+                                if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
+
+                                if (oValueHelp) {
+                                    var bValueFormatter = false;
+                                    // var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
+                                    // var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';                                    
+                                    var sTextFormatMode = "Key";
+
+                                    if (ci.TextFormatMode && ci.TextFormatMode !== "" && ci.TextFormatMode !== "Key" && ci.ValueHelp["items"].value !== ci.ValueHelp["items"].text) {
+                                        sTextFormatMode = ci.TextFormatMode;
+                                        bValueFormatter = true;
+
+                                        // if (ci.ValueHelp["SuggestionItems"].additionalText && ci.ValueHelp["SuggestionItems"].text !== ci.ValueHelp["SuggestionItems"].additionalText) {
+                                        //     if (sTextFormatMode === "ValueKey" || sTextFormatMode === "Value") {
+                                        //         sSuggestItemText = ci.ValueHelp["SuggestionItems"].additionalText;
+                                        //         sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].text;
+                                        //     }
+                                        // }
+                                    }
+                                    
+                                    var oColumns = [], oCells = [];
+                                        
+                                    //assign first cell to key/code
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Key === true).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] })
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    //assign second cell to display value/description
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Key === false && fItem.Value === true).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] })
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    //add other column info
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Visible === true && fItem.Key === false && fItem.Value === false).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] }),
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    var oInput = new sap.m.Input({
+                                        type: "Text",
+                                        showValueHelp: true,
+                                        valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
+                                        showSuggestion: true,
+                                        maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "100px",
+                                        suggestionColumns: oColumns,
+                                        suggestionRows: {
+                                            path: ci.ValueHelp["SuggestionItems"].path,
+                                            template: new sap.m.ColumnListItem({
+                                                cells: oCells
+                                            }),
+                                            length: 10000,
+                                            templateShareable: false
+                                        },
+                                        change: this.handleValueHelpChange.bind(this)
+                                    })
+
+                                    oInput.setSuggestionRowValidator(this.suggestionRowValidator);
+
+                                    if (bValueFormatter) {
+                                        oInput.setProperty("textFormatMode", sTextFormatMode);
+                                        oInput.bindValue({  
+                                            parts: [{ path: sColName }, { value: ci.ValueHelp["items"].path }, { value: ci.ValueHelp["items"].value }, { value: ci.ValueHelp["items"].text }, { value: sTextFormatMode }],
+                                            formatter: this.formatValueHelp.bind(this)
+                                        });
+                                    }
+                                    else {
+                                        oInput.bindValue({  
+                                            parts: [  
+                                                { path: sColName }
+                                            ]
+                                        });
+                                    }
+
+                                    col.setTemplate(oInput);
+
+                                    // col.setTemplate(new sap.m.Input({
+                                    //     type: "Text",
+                                    //     value: "{" + sColName + "}",
+                                    //     showValueHelp: true,
+                                    //     valueHelpRequest: this.handleValueHelp.bind(this),
+                                    //     showSuggestion: true,
+                                    //     maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                    //     suggestionItems: {
+                                    //         path: ci.ValueHelp["SuggestionItems"].path,
+                                    //         length: 10000,
+                                    //         template: new sap.ui.core.ListItem({
+                                    //             key: ci.ValueHelp["SuggestionItems"].text,
+                                    //             text: ci.ValueHelp["SuggestionItems"].text,
+                                    //             additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                    //         }),
+                                    //         templateShareable: false
+                                    //     },
+                                    //     // suggest: this.handleSuggestion.bind(this),
+                                    //     change: this.handleValueHelpChange.bind(this)
+                                    // }));
+                                }
+                                else if (ci.DataType === "DATETIME") {
+                                    if (this._sActiveTable === "costHdrTab" && sColName === "CSDATE") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "MM/dd/yyyy",
+                                            valueFormat: "MM/dd/yyyy",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }                                            
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "MM/dd/yyyy",
+                                            valueFormat: "MM/dd/yyyy",
+                                            change: this.onInputLiveChange.bind(this)
+                                        }));
+                                    }
+                                }
+                                else if (ci.DataType === "NUMBER") {
+                                    // console.log("a3 NUMBER " + sColName);
+                                    col.setTemplate(new sap.m.Input({
+                                        type: sap.m.InputType.Number,
+                                        textAlign: sap.ui.core.TextAlign.Right,
+                                        value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                        // change: this.onNumberChange.bind(this),
+                                        liveChange: this.onNumberLiveChange.bind(this)
+                                    }));
+                                }
+                                else if (ci.DataType === "BOOLEAN") {
+                                    col.setTemplate(new sap.m.CheckBox({selected: "{" + sColName + "}", editable: true}));
+                                }
+                                else {
+                                    if (this._sActiveTable === "ioMatListTab" && sColName === "MATDESC1") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "MATNO",
+                                                formatter: function (MATNO) {
+                                                    if (MATNO !== "") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else if (this._sActiveTable === "costHdrTab" && sColName === "VERDESC") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this)
+                                        }));
+                                    }
+                                }
+
+                                if (ci.Mandatory) {
+                                    col.getLabel().addStyleClass("sapMLabelRequired");
+                                }
+
+                                if (ci.DataType === "STRING") oNewRow[sColName] = "";
+                                else if (ci.DataType === "NUMBER") oNewRow[sColName] = 0;
+                                else if (ci.DataType === "BOOLEAN") oNewRow[sColName] = false;
+                            }
+                        })
+                })
+
+                oNewRow["NEW"] = true;
+                aNewRow.push(oNewRow);
+
+                this.byId(this._sActiveTable).getModel().setProperty("/rows", aNewRow);
+                this.byId(this._sActiveTable).bindRows("/rows");
+                this._dataMode = "NEW";
+
+                oTable.focus();
+            },
+
+            setRowEditMode() {
+                var oTable = this.byId(this._sActiveTable);
+
+                var oInputEventDelegate = {
+                    onkeydown: function(oEvent){
+                        me.onInputKeyDown(oEvent);
+                    },
+                }; 
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+                    var oValueHelp = false;
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+
+                    this._aColumns[this._sActiveTable.replace("Tab","")].filter(item => item.ColumnName === sColName)
+                        .forEach(ci => {
+                            if (ci.Editable) {
+                                if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
+
+                                if (oValueHelp) {
+                                    var bValueFormatter = true;
+                                    // var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
+                                    // var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';                                    
+                                    var sTextFormatMode = "Key";
+
+                                    if (ci.TextFormatMode && ci.TextFormatMode !== "" && ci.TextFormatMode !== "Key" && ci.ValueHelp["items"].value !== ci.ValueHelp["items"].text) {
+                                        sTextFormatMode = ci.TextFormatMode;
+                                        // bValueFormatter = true;
+
+                                        // if (ci.ValueHelp["SuggestionItems"].additionalText && ci.ValueHelp["SuggestionItems"].text !== ci.ValueHelp["SuggestionItems"].additionalText) {
+                                        //     if (sTextFormatMode === "ValueKey" || sTextFormatMode === "Value") {
+                                        //         sSuggestItemText = ci.ValueHelp["SuggestionItems"].additionalText;
+                                        //         sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].text;
+                                        //     }
+                                        // }
+                                    }
+
+                                    // var oInput = new sap.m.Input({
+                                    //     type: "Text",
+                                    //     showValueHelp: true,
+                                    //     valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
+                                    //     showSuggestion: true,
+                                    //     maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "100px",
+                                    //     suggestionItems: {
+                                    //         path: ci.ValueHelp["SuggestionItems"].path,
+                                    //         length: 10000,
+                                    //         template: new sap.ui.core.ListItem({
+                                    //             key: ci.ValueHelp["SuggestionItems"].text,
+                                    //             text: sSuggestItemText,
+                                    //             additionalText: sSuggestItemAddtlText,
+                                    //         }),
+                                    //         templateShareable: false
+                                    //     },
+                                    //     change: this.handleValueHelpChange.bind(this)
+                                    // })
+
+                                    var oColumns = [], oCells = [];
+                                        
+                                    //assign first cell to key/code
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Key === true).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] })
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    //assign second cell to display value/description
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Key === false && fItem.Value === true).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] })
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    //add other column info
+                                    this._oModelColumns[ci.ValueHelp["columns"]].filter(fItem => fItem.Visible === true && fItem.Key === false && fItem.Value === false).forEach(item => {
+                                        oColumns.push(new sap.m.Column({
+                                            header: new sap.m.Label({ text: this.getView().getModel("ddtext").getData()[item.ColumnName] }),
+                                        }))
+
+                                        oCells.push(new sap.m.Text({
+                                            text: { path: ci.ValueHelp["items"].path + ">" + item.ColumnName }
+                                        }))
+                                    })
+
+                                    var oInput = new sap.m.Input({
+                                        type: "Text",
+                                        showValueHelp: true,
+                                        valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
+                                        showSuggestion: true,
+                                        suggest: this.onInputSuggest.bind(this),
+                                        maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].maxSuggestionWidth !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "100px",
+                                        suggestionColumns: oColumns,
+                                        suggestionRows: {
+                                            path: ci.ValueHelp["SuggestionItems"].path,
+                                            template: new sap.m.ColumnListItem({
+                                                cells: oCells
+                                            }),
+                                            length: 10000,
+                                            templateShareable: false
+                                        },
+                                        change: this.handleValueHelpChange.bind(this)
+                                    })
+
+                                    oInput.setSuggestionRowValidator(this.suggestionRowValidator);
+
+                                    if (bValueFormatter) {
+                                        oInput.setProperty("textFormatMode", sTextFormatMode)
+
+                                        oInput.bindValue({  
+                                            parts: [{ path: sColName }, { value: ci.ValueHelp["items"].path }, { value: ci.ValueHelp["items"].value }, { value: ci.ValueHelp["items"].text }, { value: sTextFormatMode }],
+                                            formatter: this.formatValueHelp.bind(this)
+                                        });
+                                    }
+                                    else {
+                                        oInput.bindValue({  
+                                            parts: [  
+                                                { path: sColName }
+                                            ]
+                                        });
+                                    }
+
+                                    oInput.addEventDelegate(oInputEventDelegate);
+
+                                    col.setTemplate(oInput);
+                                }
+                                else if (ci.DataType === "DATETIME") {
+                                    if (this._sActiveTable === "costHdrTab" && sColName === "CSDATE") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "MM/dd/yyyy",
+                                            valueFormat: "MM/dd/yyyy",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }                                            
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "MM/dd/yyyy",
+                                            valueFormat: "MM/dd/yyyy",
+                                            change: this.onInputLiveChange.bind(this)
+                                        }));
+                                    }
+                                }
+                                else if (ci.DataType === "NUMBER") {
+                                    col.setTemplate(new sap.m.Input({
+                                        type: sap.m.InputType.Number,
+                                        textAlign: sap.ui.core.TextAlign.Right,
+                                        value: {
+                                            path: sColName,
+                                            formatOptions: {
+                                                minFractionDigits: ci.Decimal,
+                                                maxFractionDigits: ci.Decimal
+                                            },
+                                            constraints: {
+                                                precision: ci.Length,
+                                                scale: ci.Decimal
+                                            }
+                                        },
+                                        liveChange: this.onNumberLiveChange.bind(this)
+                                    }).addEventDelegate(oInputEventDelegate));
+                                }
+                                else {
+                                    if (this._sActiveTable === "ioMatListTab" && sColName === "MATDESC1") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "MATNO",
+                                                formatter: function (MATNO) {
+                                                    if (MATNO !== "") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }).addEventDelegate(oInputEventDelegate));
+                                    }
+                                    else if (this._sActiveTable === "costHdrTab" && sColName === "VERDESC") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }).addEventDelegate(oInputEventDelegate));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this)
+                                        }).addEventDelegate(oInputEventDelegate));
+                                    }
+                                }
+
+                                if (ci.Mandatory) {
+                                    col.getLabel().addStyleClass("sapMLabelRequired");
+                                }
+                            }
+                        })
+                })
+            },
+
+            onAddNewRow() {
+                var oTable = this.byId(this._sActiveTable);
+                var aNewRow = oTable.getModel().getData().rows;
+                var oNewRow = {};  
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.value !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
+                    }
+
+                    this._aColumns[this._sActiveTable.replace("Tab","")].filter(item => item.ColumnName === sColName)
+                        .forEach(ci => {
+                            if (ci.Editable || ci.Creatable) {   
+                                if (ci.DataType === "STRING") oNewRow[sColName] = "";
+                                else if (ci.DataType === "NUMBER") oNewRow[sColName] = 0;
+                                else if (ci.DataType === "BOOLEAN") oNewRow[sColName] = false;                                
+                            }
+                        })
+                })
+
+                oNewRow["NEW"] = true;
+                aNewRow.push(oNewRow);
+
+                this.byId(this._sActiveTable).getModel().setProperty("/rows", aNewRow);
+                this.byId(this._sActiveTable).bindRows("/rows");
+                // oTable.focus();
+            },
+
+            onEdit: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.editData();
+            },
+
+            editData() {
+                if(this._sbu === "" || this._sbu === undefined) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SBU_REQUIRED"])
+                    return;
+                }
+
+                if (this._dataMode === "READ") {
+                    if (this._sActiveTable === "headerTab") this._bHdrChanged = false;
+                    else if (this._sActiveTable === "detailTab") this._bDtlChanged = false;
+                    
+                    if (this.byId(this._sActiveTable).getModel().getData().rows.length === 0) {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"])
+                    }
+                    else {
+                        if (this._sActiveTable === "headerTab") {
+                            this.byId("btnAddHdr").setVisible(false);
+                            this.byId("btnEditHdr").setVisible(false);
+                            this.byId("btnDeleteHdr").setVisible(false);
+                            this.byId("btnRefreshHdr").setVisible(false);
+                            this.byId("btnSaveHdr").setVisible(true);
+                            this.byId("btnCancelHdr").setVisible(true);
+                            // this.byId("btnCopyHdr").setVisible(false);
+                            // this.byId("btnAddNewHdr").setVisible(false);
+                            this.byId("btnTabLayoutHdr").setVisible(false);
+                            this.byId("btnDataWrapHdr").setVisible(false);
+                            // this.byId("searchFieldHdr").setVisible(false);
+
+                            // this.byId("btnAddDtl").setEnabled(false);
+                            // this.byId("btnEditDtl").setEnabled(false);
+                            // this.byId("btnDeleteDtl").setEnabled(false);
+                            // this.byId("btnRefreshDtl").setEnabled(false);
+                            // // this.byId("searchFieldDtl").setEnabled(false);
+                            // this.byId("btnTabLayoutDtl").setEnabled(false);
+                            // this.byId("btnDataWrapDtl").setEnabled(false);
+                        }
+                        // else if (this._sActiveTable === "detailTab") {
+                        //     this.byId("btnAddDtl").setVisible(false);
+                        //     this.byId("btnEditDtl").setVisible(false);
+                        //     this.byId("btnDeleteDtl").setVisible(false);
+                        //     this.byId("btnRefreshDtl").setVisible(false);
+                        //     this.byId("btnSaveDtl").setVisible(true);
+                        //     this.byId("btnCancelDtl").setVisible(true);
+                        //     // this.byId("btnCopyDtl").setVisible(true);
+                        //     // this.byId("btnAddNewDtl").setVisible(false);
+                        //     // this.byId("searchFieldDtl").setVisible(false);
+                        //     this.byId("btnTabLayoutDtl").setVisible(false);
+                        //     this.byId("btnDataWrapDtl").setVisible(false);
+
+                        //     this.byId("btnAddHdr").setEnabled(false);
+                        //     this.byId("btnEditHdr").setEnabled(false);
+                        //     this.byId("btnDeleteHdr").setEnabled(false);
+                        //     this.byId("btnRefreshHdr").setEnabled(false);
+                        //     this.byId("btnCopyHdr").setEnabled(false);
+                        //     this.byId("btnTabLayoutHdr").setEnabled(false);
+                        //     this.byId("btnDataWrapHdr").setEnabled(false);
+                        //     // this.byId("searchFieldHdr").setEnabled(false);
+                        // }
+    
+                        this._aDataBeforeChange = jQuery.extend(true, [], this.byId(this._sActiveTable).getModel().getData().rows);
+                        this._validationErrors = [];
+                        this._dataMode = "EDIT";
+                        
+                        if (this.byId(this._sActiveTable).getBinding("rows").aFilters.length > 0) {
+                            this._aColFilters = this.byId(this._sActiveTable).getBinding("rows").aFilters;
+                        }
+    
+
+                        if (this.byId(this._sActiveTable).getBinding("rows").aSorters.length > 0) {
+                            this._aColSorters = this.byId(this._sActiveTable).getBinding("rows").aSorters;
+                        }
+
+                        this.setRowEditMode();
+                    }
+                }                
+            },
+
+            onCancel: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.cancelData();
+            },
+
+            cancelData() {
+                // console.log(this._sActiveTable);
+                if (this._dataMode === "NEW" || this._dataMode === "EDIT") {
+                    var bChanged = false;
+
+                    if (this._sActiveTable === "headerTab") bChanged = this._bHdrChanged;
+                    else if (this._sActiveTable === "detailTab") bChanged = this._bDtlChanged;
+    
+                    if (bChanged) {
+                        var oData = {
+                            Action: "update-cancel",
+                            Text: this.getView().getModel("ddtext").getData()["CONFIRM_DISREGARD_CHANGE"]
+                        }
+    
+                        var oJSONModel = new JSONModel();
+                        oJSONModel.setData(oData);
+    
+                        if (!this._ConfirmDialog) {
+                            this._ConfirmDialog = sap.ui.xmlfragment("zuipurallow.view.fragments.dialog.ConfirmDialog", this);
+    
+                            this._ConfirmDialog.setModel(oJSONModel);
+                            this.getView().addDependent(this._ConfirmDialog);
+                        }
+                        else this._ConfirmDialog.setModel(oJSONModel);
+    
+                        this._ConfirmDialog.open();
+                    }
+                    else {
+                        if (this._sActiveTable === "headerTab") {
+                            this.byId("btnAddHdr").setVisible(true);
+                            this.byId("btnEditHdr").setVisible(true);
+                            this.byId("btnDeleteHdr").setVisible(true);
+                            this.byId("btnRefreshHdr").setVisible(true);
+                            this.byId("btnSaveHdr").setVisible(false);
+                            this.byId("btnCancelHdr").setVisible(false);
+                            // this.byId("btnCopyHdr").setVisible(true);
+                            this.byId("btnAddNewHdr").setVisible(false);
+                            this.byId("btnTabLayoutHdr").setVisible(true);
+                            this.byId("btnDataWrapHdr").setVisible(true);
+                            // this.byId("searchFieldHdr").setVisible(true);
+
+                            // this.byId("btnAddDtl").setEnabled(true);
+                            // this.byId("btnEditDtl").setEnabled(true);
+                            // this.byId("btnDeleteDtl").setEnabled(true);
+                            // this.byId("btnRefreshDtl").setEnabled(true);
+                            // // this.byId("searchFieldDtl").setEnabled(true);
+                            // this.byId("btnTabLayoutDtl").setEnabled(true);
+                            // this.byId("btnDataWrapDtl").setEnabled(true);
+                        }
+                        // else if (this._sActiveTable === "detailTab") {
+                        //     this.byId("btnAddDtl").setVisible(true);
+                        //     this.byId("btnEditDtl").setVisible(true);
+                        //     this.byId("btnDeleteDtl").setVisible(true);
+                        //     this.byId("btnRefreshDtl").setVisible(true);
+                        //     this.byId("btnSaveDtl").setVisible(false);
+                        //     this.byId("btnCancelDtl").setVisible(false);
+                        //     // this.byId("btnCopyDtl").setVisible(false);
+                        //     this.byId("btnAddNewDtl").setVisible(false);
+                        //     // this.byId("searchFieldDtl").setVisible(true);
+                        //     this.byId("btnTabLayoutDtl").setVisible(true);
+                        //     this.byId("btnDataWrapDtl").setVisible(true);
+    
+                        //     this.byId("btnAddHdr").setEnabled(true);
+                        //     this.byId("btnEditHdr").setEnabled(true);
+                        //     this.byId("btnDeleteHdr").setEnabled(true);
+                        //     this.byId("btnRefreshHdr").setEnabled(true);
+                        //     this.byId("btnCopyHdr").setEnabled(true);
+                        //     this.byId("btnTabLayoutHdr").setEnabled(true);
+                        //     this.byId("btnDataWrapHdr").setEnabled(true);
+                        //     // this.byId("searchFieldHdr").setEnabled(true);
+                        // }
+    
+                        // if (this.byId(this._sActiveTable).getBinding("rows")) {
+                        //     me._aColFilters = this.byId(this._sActiveTable).getBinding("rows").aFilters;
+                        //     me._aColSorters = this.byId(this._sActiveTable).getBinding("rows").aSorters;
+                        // }
+
+                        this.byId(this._sActiveTable).getModel().setProperty("/rows", this._aDataBeforeChange);
+                        this.byId(this._sActiveTable).bindRows("/rows");
+
+                        // if (this._aColFilters.length > 0) { this.setColumnFilters(this._sActiveTable); }
+                        if (this._aColSorters.length > 0) { this.setColumnSorters(this._sActiveTable); }
+                        TableFilter.applyColFilters(this._sActiveTable, this);
+
+                        this.setRowReadMode();
+                        this._dataMode = "READ";
+                    }
+                }
+            },
+
+            onBatchSave: function (oEvent) {
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                this.batchSaveData();
+            },
+
+            batchSaveData() {
+                if (this._dataMode === "NEW" || this._dataMode === "EDIT") {
+                    var aNewRows = this.byId(this._sActiveTable).getModel().getData().rows.filter(item => item.NEW === true);
+                    var aEditedRows = this.byId(this._sActiveTable).getModel().getData().rows.filter(item => item.EDITED === true && item.NEW !== true);
+                    // console.log(aNewRows);
+                    // console.log(aEditedRows);
+
+                    if (aNewRows.length > 0) {
+                        if (this._validationErrors.length === 0) {
+                            this._oModel.setUseBatch(true);
+                            this._oModel.setDeferredGroups(["update"]);
+    
+                            var proceed = true;
+                            var mParameters = { groupId:"update" }
+                            var sEntitySet = "/";
+    
+                            switch (this._sActiveTable) {
+                                case "headerTab":
+                                    sEntitySet += "HeaderSet"
+                                    break;
+                                case "detailTab":
+                                    sEntitySet += "DetailSet"
+                                    break;
+                                default: break;
+                            }
+    
+                            Common.openProcessingDialog(me, "Processing...");
+    
+                            aNewRows.forEach(item => {
+                                var entitySet = sEntitySet;
+                                var param = {};
+    
+                                this._aColumns[this._sActiveTable.replace("Tab","")].forEach(col => {
+                                    if (col.Editable || col.Creatable) {
+                                        if (col.DataType === "DATETIME") {
+                                            if (col.ColumnName === "EFFECTDT")
+                                                param[col.ColumnName] = item[col.ColumnName] === "" ? "" : sapDateFormat.format(new Date(item[col.ColumnName]));
+                                            else 
+                                                param[col.ColumnName] = item[col.ColumnName] === "" ? "" : sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00";
+                                        } 
+                                        else if (col.DataType === "BOOLEAN") {
+                                            param[col.ColumnName] = item[col.ColumnName] === true ? "X" : "";
+                                        }
+                                        else {
+                                            param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName] + "";
+                                        }
+    
+                                        if (col.Mandatory && (item[col.ColumnName] + "").length === 0) proceed = false;
+                                    }
+                                })
+    
+                                if (this._sActiveTable === "detailTab") param["COSTCOMPCD"] = this.getView().getModel("ui").getData().activeComp;
+                                // console.log(entitySet, param)
+                                this._oModel.create(entitySet, param, mParameters);
+                            })
+    
+                            if (!proceed) {
+                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_INPUT_REQD_FIELDS"]);
+                                Common.closeProcessingDialog(me);
+                            }
+                            else {
+                                this._oModel.submitChanges({
+                                    groupId: "update",
+                                    success: function (oData, oResponse) {
+                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                        // console.log(oResponse);
+                                        var aData = me._aDataBeforeChange;
+
+                                        oResponse.data.__batchResponses[0].__changeResponses.forEach((resp, respIdx) => {
+                                            var oMessage = JSON.parse(resp.headers["sap-message"]);
+        
+                                            if (oMessage.severity === "success") {
+                                                aNewRows.forEach((nr, nrIndex) => {
+                                                    if (nrIndex === respIdx) {
+                                                        //set SEQ assigned from backend
+                                                        nr.SEQ = oMessage.message;
+
+                                                        //merge data
+                                                        aData.push(nr);
+                                                    }
+                                                })
+                                            }
+                                        })
+
+                                        //merge data
+                                        // aNewRows.forEach(item => aData.push(item));
+
+                                        me.byId(me._sActiveTable).getModel().setProperty("/rows", aData);
+                                        me.byId(me._sActiveTable).bindRows("/rows");
+
+                                        if (me._sActiveTable === "headerTab") {
+                                            me.byId("btnAddHdr").setVisible(true);
+                                            me.byId("btnEditHdr").setVisible(true);
+                                            me.byId("btnDeleteHdr").setVisible(true);
+                                            me.byId("btnRefreshHdr").setVisible(true);
+                                            me.byId("btnSaveHdr").setVisible(false);
+                                            me.byId("btnCancelHdr").setVisible(false);
+                                            me.byId("btnCopyHdr").setVisible(true);
+                                            me.byId("btnAddNewHdr").setVisible(false);
+                                            me.byId("btnTabLayoutHdr").setVisible(true);
+                                            me.byId("btnDataWrapHdr").setVisible(true);
+                                            // me.byId("searchFieldHdr").setVisible(true);
+
+                                            me.byId("btnAddDtl").setEnabled(true);
+                                            me.byId("btnEditDtl").setEnabled(true);
+                                            me.byId("btnDeleteDtl").setEnabled(true);
+                                            me.byId("btnRefreshDtl").setEnabled(true);
+                                            // me.byId("searchFieldDtl").setEnabled(true);
+                                            me.byId("btnTabLayoutDtl").setEnabled(true);
+                                            me.byId("btnDataWrapDtl").setEnabled(true);
+
+                                            me.getView().getModel("counts").setProperty("/header", aData.length);
+                                        }
+                                        else if (me._sActiveTable === "detailTab") {
+                                            me.byId("btnAddDtl").setVisible(true);
+                                            me.byId("btnEditDtl").setVisible(true);
+                                            me.byId("btnDeleteDtl").setVisible(true);
+                                            me.byId("btnRefreshDtl").setVisible(true);
+                                            me.byId("btnSaveDtl").setVisible(false);
+                                            me.byId("btnCancelDtl").setVisible(false);
+                                            // me.byId("btnCopyDtl").setVisible(false);
+                                            me.byId("btnAddNewDtl").setVisible(false);
+                                            // me.byId("searchFieldDtl").setVisible(true);
+                                            me.byId("btnTabLayoutDtl").setVisible(true);
+                                            me.byId("btnDataWrapDtl").setVisible(true);
+
+                                            me.byId("btnAddHdr").setEnabled(true);
+                                            me.byId("btnEditHdr").setEnabled(true);
+                                            me.byId("btnDeleteHdr").setEnabled(true);
+                                            me.byId("btnRefreshHdr").setEnabled(true);
+                                            me.byId("btnCopyHdr").setEnabled(true);
+                                            me.byId("btnTabLayoutHdr").setEnabled(true);
+                                            me.byId("btnDataWrapHdr").setEnabled(true);
+                                            // me.byId("searchFieldHdr").setEnabled(true);
+
+                                            me.getView().getModel("counts").setProperty("/detail", aData.length);
+                                        }
+
+                                        if (me._aColFilters.length > 0) { me.setColumnFilters(me._sActiveTable); }
+                                        if (me._aColSorters.length > 0) { me.setColumnSorters(me._sActiveTable); }
+
+                                        me._dataMode = "READ";
+                                        Common.closeProcessingDialog(me);
+                                        me.setRowReadMode();                                        
+                                        // me.refreshData();
+                                    },
+                                    error: function () {
+                                        Common.closeProcessingDialog(me);
+                                    }
+                                })
+                            }
+                        }
+                        else {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        }
+                    }
+                    else if (aEditedRows.length > 0) {
+                        if (this._validationErrors.length === 0) {                      
+                            var sEntitySet = "";
+                            var proceed = true;
+    
+                            if (this._sActiveTable === "headerTab") sEntitySet = "HeaderSet(";
+                            else sEntitySet = "DetailSet(";
+    
+                            this._oModel.setUseBatch(true);
+                            this._oModel.setDeferredGroups(["update"]);
+    
+                            var mParameters = {
+                                "groupId":"update"
+                            }
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aEditedRows.forEach(item => {
+                                var entitySet = sEntitySet;
+                                var param = {};
+                                var iKeyCount = this._aColumns[this._sActiveTable.replace("Tab","")].filter(col => col.Key === "X").length;
+                                var itemValue;
+                                // console.log(this._aColumns[arg])
+                                this._aColumns[this._sActiveTable.replace("Tab","")].forEach(col => {
+                                    if (col.DataType === "DATETIME") {
+                                        if (col.ColumnName === "EFFECTDT")
+                                            itemValue = sapDateFormat2.format(new Date(item[col.ColumnName]));
+                                        else 
+                                            itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00";
+                                    } 
+                                    else if (col.DataType === "BOOLEAN") {
+                                        param[col.ColumnName] = item[col.ColumnName] === true ? "X" : "";
+                                    }
+                                    else {
+                                        itemValue = item[col.ColumnName];
+                                    }
+    
+                                    if (col.Editable) {
+                                        param[col.ColumnName] = itemValue;
+    
+                                        if (col.Mandatory && (item[col.ColumnName] + "").length === 0) proceed = false;
+                                    }
+    
+                                    if (iKeyCount === 1) {
+                                        if (col.Key === "X")
+                                            entitySet += "'" + itemValue + "'"
+                                    }
+                                    else if (iKeyCount > 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + itemValue + "',"
+                                        }
+                                    }
+                                })
+    
+                                if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                entitySet += ")";
+                                // console.log(entitySet, param);
+                                this._oModel.update("/" + encodeURIComponent(entitySet), param, mParameters);
+                            })
+    
+                            if (!proceed) {
+                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_INPUT_REQD_FIELDS"]);
+                                Common.closeProcessingDialog(me);
+                            }
+                            else {
+                                this._oModel.submitChanges({
+                                    groupId: "update",
+                                    success: function (oData, oResponse) {
+                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                        if (me._sActiveTable === "headerTab") {
+                                            me.byId("btnAddHdr").setVisible(true);
+                                            me.byId("btnEditHdr").setVisible(true);
+                                            me.byId("btnDeleteHdr").setVisible(true);
+                                            me.byId("btnRefreshHdr").setVisible(true);
+                                            me.byId("btnSaveHdr").setVisible(false);
+                                            me.byId("btnCancelHdr").setVisible(false);
+                                            me.byId("btnCopyHdr").setVisible(true);
+                                            me.byId("btnAddNewHdr").setVisible(false);
+                                            me.byId("btnTabLayoutHdr").setVisible(true);
+                                            me.byId("btnDataWrapHdr").setVisible(true);
+                                            // me.byId("searchFieldHdr").setVisible(true);
+
+                                            me.byId("btnAddDtl").setEnabled(true);
+                                            me.byId("btnEditDtl").setEnabled(true);
+                                            me.byId("btnDeleteDtl").setEnabled(true);
+                                            me.byId("btnRefreshDtl").setEnabled(true);
+                                            // me.byId("searchFieldDtl").setEnabled(true);
+                                            me.byId("btnTabLayoutDtl").setEnabled(true);
+                                            me.byId("btnDataWrapDtl").setEnabled(true);
+                                        }
+                                        else if (me._sActiveTable === "detailTab") {
+                                            me.byId("btnAddDtl").setVisible(true);
+                                            me.byId("btnEditDtl").setVisible(true);
+                                            me.byId("btnDeleteDtl").setVisible(true);
+                                            me.byId("btnRefreshDtl").setVisible(true);
+                                            me.byId("btnSaveDtl").setVisible(false);
+                                            me.byId("btnCancelDtl").setVisible(false);
+                                            // me.byId("btnCopyDtl").setVisible(false);
+                                            me.byId("btnAddNewDtl").setVisible(false);
+                                            // me.byId("searchFieldDtl").setVisible(true);
+                                            me.byId("btnTabLayoutDtl").setVisible(true);
+                                            me.byId("btnDataWrapDtl").setVisible(true);
+                    
+                                            me.byId("btnAddHdr").setEnabled(true);
+                                            me.byId("btnEditHdr").setEnabled(true);
+                                            me.byId("btnDeleteHdr").setEnabled(true);
+                                            me.byId("btnRefreshHdr").setEnabled(true);
+                                            me.byId("btnCopyHdr").setEnabled(true);
+                                            me.byId("btnTabLayoutHdr").setEnabled(true);
+                                            me.byId("btnDataWrapHdr").setEnabled(true);
+                                            // me.byId("searchFieldHdr").setEnabled(true);
+                                        }
+        
+                                        if (me._aColFilters.length > 0) { me.setColumnFilters(me._sActiveTable); }
+                                        if (me._aColSorters.length > 0) { me.setColumnSorters(me._sActiveTable); }
+
+                                        me._dataMode = "READ";
+                                        Common.closeProcessingDialog(me);
+                                        me.setRowReadMode();
+                                        // me.refreshData();
+                                    },
+                                    error: function () {
+                                        Common.closeProcessingDialog(me);
+                                    }
+                                })
+                            }
+                        }
+                        else {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        }
+                    }
+                    else {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    }
+                }
+            }
             
         });
     });

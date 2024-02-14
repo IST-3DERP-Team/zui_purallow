@@ -1,27 +1,15 @@
 {
     "header": [
-        {"ColumnName": "COSTCOMPCD", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "COMPONENT_MODEL", "value": "COSTCOMPCD", "text": "COMPDESC"},
-                "SuggestionItems": {"path": "COMPONENT_MODEL>/", "text": "{COMPONENT_MODEL>COSTCOMPCD}", "additionalText": "{COMPONENT_MODEL>COMPDESC}", "maxSuggestionWidth": "500px"},
-                "columns": "tvh_compcostcd"
-            }
-        },
-        {"ColumnName": "COMPANYCD", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "COMPANY_MODEL", "value": "COMPANYCD", "text": "DESCRIPTION"},
-                "SuggestionItems": {"path": "COMPANY_MODEL>/", "text": "{COMPANY_MODEL>COMPANYCD}", "additionalText": "{COMPANY_MODEL>DESCRIPTION}", "maxSuggestionWidth": "300px"},
-                "columns": "tvh_companycd"
+        {"ColumnName": "MATTYP", "TextFormatMode": "ValueKey",
+            "ValueHelp": {"show": true, "items": {"path": "MATTYP_MODEL", "value": "MaterialType", "text": "Description"},
+                "SuggestionItems": {"path": "MATTYP_MODEL>/", "text": "{MATTYP_MODEL>MaterialType}", "additionalText": "{MATTYP_MODEL>Description}", "maxSuggestionWidth": "350px"},
+                "columns": "tvh_mattyp"
             }
         },
         {"ColumnName": "PLANTCD", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "PLANT_MODEL", "value": "PLANTCD", "text": "DESCRIPTION"},
-                "SuggestionItems": {"path": "PLANT_MODEL>/", "text": "{PLANT_MODEL>PLANTCD}", "additionalText": "{PLANT_MODEL>DESCRIPTION}", "maxSuggestionWidth": "350px"},
+            "ValueHelp": {"show": true, "items": {"path": "PLANT_MODEL", "value": "PurchPlant", "text": "DESCRIPTION"},
+                "SuggestionItems": {"path": "PLANT_MODEL>/", "text": "{PLANT_MODEL>PurchPlant}", "additionalText": "{PLANT_MODEL>DESCRIPTION}", "maxSuggestionWidth": "350px"},
                 "columns": "tvh_plantcd"
-            }
-        },
-        {"ColumnName": "SALESTERM", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "SALESTERM_MODEL", "value": "SALESTERM", "text": "DESCRIPTION" },
-                "SuggestionItems": {"path": "SALESTERM_MODEL>/", "text": "{SALESTERM_MODEL>SALESTERM}", "additionalText": "{SALESTERM_MODEL>DESCRIPTION}", "maxSuggestionWidth": "300px"},
-                "columns": "tvh_salesterm"
             }
         },
         {"ColumnName": "CUSTGRP", "TextFormatMode": "ValueKey",
@@ -30,45 +18,40 @@
                 "columns": "tvh_custgrp"
             }
         },
-        {"ColumnName": "WVTYP", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "WVTYP_MODEL", "value": "ATTRIBCD", "text": "DESCRIPTION" },
-                "SuggestionItems": {"path": "WVTYP_MODEL>/", "text": "{WVTYP_MODEL>ATTRIBCD}", "additionalText": "{WVTYP_MODEL>DESCRIPTION}", "maxSuggestionWidth": "300px"},
-                "columns": "tvh_wvtyp"
+        {"ColumnName": "VENDORCD", "TextFormatMode": "ValueKey",
+            "ValueHelp": {"show": true, "items": {"path": "VENDOR_MODEL", "value": "Vendor", "text": "Description" },
+                "SuggestionItems": {"path": "VENDOR_MODEL>/", "text": "{VENDOR_MODEL>Vendor}", "additionalText": "{VENDOR_MODEL>Description}", "maxSuggestionWidth": "300px"},
+                "columns": "tvh_vendor"
             }
         },
-        {"ColumnName": "STATUSCDCS", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "STATUS_MODEL", "value": "STATUSCD", "text": "STATUSDESC"},
-                "SuggestionItems": {"path": "STATUS_MODEL>/", "text": "{STATUS_MODEL>STATUSCD}", "additionalText": "{STATUS_MODEL>STATUSDESC}", "maxSuggestionWidth": "200px"},
-                "columns": "tvh_statuscdcs"
+        {"ColumnName": "UOM", "TextFormatMode": "ValueKey",
+            "ValueHelp": {"show": true, "items": {"path": "UOM_MODEL", "value": "MSEHI", "text": "MSEHL" },
+                "SuggestionItems": {"path": "UOM_MODEL>/", "text": "{UOM_MODEL>MSEHI}", "additionalText": "{UOM_MODEL>MSEHL}", "maxSuggestionWidth": "300px"},
+                "columns": "tvh_uom"
             }
         }
     ],
-    "tvh_compcostcd": [
-        {"ColumnName": "COSTCOMPCD", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "COMPDESC", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true}
-    ],    
-    "tvh_companycd": [
-        {"ColumnName": "COMPANYCD", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
+    "tvh_mattyp": [
+        {"ColumnName": "MaterialType", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "Description", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "SBU", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": true}
     ],
     "tvh_plantcd": [
-        {"ColumnName": "PLANTCD", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
-    ],
-    "tvh_salesterm": [
-        {"ColumnName": "SALESTERM", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "PurchPlant", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
         {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ],
     "tvh_custgrp": [
         {"ColumnName": "CUSTGRP", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
         {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ],
-    "tvh_wvtyp": [
-        {"ColumnName": "ATTRIBCD", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
+    "tvh_vendor": [
+        {"ColumnName": "Vendor", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "Description", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "CountryCode", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ],
-    "tvh_statuscdcs": [
-        {"ColumnName": "STATUSCD", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "STATUSDESC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": true}
+    "tvh_uom": [
+        {"ColumnName": "MSEHI", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "MSEHL", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "ANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ]
 }

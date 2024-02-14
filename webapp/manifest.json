@@ -94,6 +94,29 @@
                 "sap.ushell": {}
             }
         },
+        "commands": {
+            "New": {
+                "shortcut": "Ctrl+I"
+            },
+            "Edit": {
+                "shortcut": "Ctrl+E"
+            },
+            "Delete": {
+                "shortcut": "Ctrl+D"
+            },
+            "Save": {
+                "shortcut": "Ctrl+S"
+            },
+            "Cancel": {
+                "shortcut": "Ctrl+X"
+            },
+            "Refresh": {
+                "shortcut": "Ctrl+R"
+            },
+            "Copy": {
+                "shortcut": "Ctrl+C"
+            }
+        },
         "contentDensities": {
             "compact": true,
             "cozy": true

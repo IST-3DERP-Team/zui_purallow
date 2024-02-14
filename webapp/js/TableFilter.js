@@ -131,7 +131,7 @@ sap.ui.define([
                 sTableId = oEvent.getSource().data("TableName");
             }
 
-            var sDialogFragmentName = "zuicostcnfg.view.fragments.dialog.GenericFilterDialog";
+            var sDialogFragmentName = "zuipurallow.view.fragments.dialog.GenericFilterDialog";
 
             if (!me._GenericFilterDialog) {
                 me._GenericFilterDialog = sap.ui.xmlfragment(sDialogFragmentName, me);

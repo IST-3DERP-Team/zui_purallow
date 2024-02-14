@@ -8,15 +8,15 @@
     xmlns:uiL="sap.ui.layout"
     xmlns:uiT="sap.ui.table">
     <Page id="page" enableScrolling="false" class="sapUiNoContentPadding" showHeader="false">
-        <!-- <dependents>
+        <dependents>
             <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
             <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
             <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
             <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
             <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" />
             <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".refreshData" />
-            <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".copyData" />
-        </dependents> -->
+            <!-- <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".copyData" /> -->
+        </dependents>
         <content>
             <VBox id="VBox1" fitContainer="true" class="sidePadding">
                 <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_PURALLOW_FILTER" search="onSearch" persistencyKey="3DERP_CCPKey" filterContainerWidth="15rem" showClearOnFB="true"
@@ -157,11 +157,11 @@
                                                 press="onDelete"
                                                 tooltip="{ddtext>/DELETE}"
                                                 visible="true"/>
-                                            <Button id="btnCopyHdr" 
+                                            <!-- <Button id="btnCopyHdr" 
                                                 icon="sap-icon://copy"
                                                 press="onCopy"
                                                 tooltip="{ddtext>/COPY}"
-                                                visible="true"/>
+                                                visible="true"/> -->
                                             <Button id="btnRefreshHdr" 
                                                 icon="sap-icon://refresh"
                                                 press="onRefresh"
