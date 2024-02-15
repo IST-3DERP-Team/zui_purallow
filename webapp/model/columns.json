@@ -25,8 +25,8 @@
             }
         },
         {"ColumnName": "UOM", "TextFormatMode": "ValueKey",
-            "ValueHelp": {"show": true, "items": {"path": "UOM_MODEL", "value": "MSEHI", "text": "MSEHL" },
-                "SuggestionItems": {"path": "UOM_MODEL>/", "text": "{UOM_MODEL>MSEHI}", "additionalText": "{UOM_MODEL>MSEHL}", "maxSuggestionWidth": "300px"},
+            "ValueHelp": {"show": true, "items": {"path": "UOM_MODEL", "value": "UOM", "text": "DESCRIPTION" },
+                "SuggestionItems": {"path": "UOM_MODEL>/", "text": "{UOM_MODEL>UOM}", "additionalText": "{UOM_MODEL>DESCRIPTION}", "maxSuggestionWidth": "300px"},
                 "columns": "tvh_uom"
             }
         }
@@ -50,8 +50,8 @@
         {"ColumnName": "CountryCode", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ],
     "tvh_uom": [
-        {"ColumnName": "MSEHI", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "MSEHL", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "ANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
+        {"ColumnName": "UOM", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "strANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true}
     ]
 }

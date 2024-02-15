@@ -234,7 +234,7 @@ sap.ui.define([
             },
 
             onSBUChange: function (oEvent) {
-                alert("onSBUChange");
+                // alert("onSBUChange");
                 this._sbuChange = true;
                 
                 var me = this;                
@@ -289,8 +289,9 @@ sap.ui.define([
                     error: function (err) { }
                 });
 
-                oModel.read("/ZVB_3DERP_UOM_SH", {
+                oModel.read("/ZVB_UOMINFO2_SH", {
                     success: function (oData, oResponse) {
+                        console.log(oData.results);
                         // var aData = new JSONModel({ results: oData.results });
                         // me.getView().setModel(aData, "UOM_MODEL");
                         me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
@@ -870,6 +871,7 @@ sap.ui.define([
             onCloseConfirmDialog: function (oEvent) {
                 if (this._ConfirmDialog.getModel().getData().Action === "update-cancel") {
                     if (this._sActiveTable === "headerTab") {
+                        this.byId("smartFilterBar").setVisible(true);
                         this.byId("btnAddHdr").setVisible(true);
                         this.byId("btnEditHdr").setVisible(true);
                         this.byId("btnDeleteHdr").setVisible(true);
@@ -880,6 +882,8 @@ sap.ui.define([
                         this.byId("btnAddNewHdr").setVisible(false);
                         this.byId("btnTabLayoutHdr").setVisible(true);
                         this.byId("btnDataWrapHdr").setVisible(true);
+                        this.byId("btnFullScreen").setVisible(true);
+                        this.byId("btnExitFullScreen").setVisible(true);
                         // this.byId("searchFieldHdr").setVisible(true);
 
                         // this.byId("btnAddDtl").setEnabled(true);
@@ -2274,6 +2278,7 @@ sap.ui.define([
             setRowReadMode() {
                 var oTable = this.byId(this._sActiveTable);
                 var sColName = "";
+                console.log(this._aColumns[this._sActiveTable.replace("Tab","")]);
 
                 oTable.getColumns().forEach((col, idx) => {
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
@@ -2285,7 +2290,7 @@ sap.ui.define([
                     else if (col.mAggregations.template.mBindingInfos.value !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
                     }
-
+                    
                     this._aColumns[this._sActiveTable.replace("Tab","")].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
                             if (ci.TextFormatMode && ci.TextFormatMode !== "" && ci.TextFormatMode !== "Key" && ci.ValueHelp && ci.ValueHelp["items"].text && ci.ValueHelp["items"].value !== ci.ValueHelp["items"].text) {
@@ -2353,6 +2358,7 @@ sap.ui.define([
                 // alert(this._sActiveTable);
                 if (this._dataMode === "READ") {
                     if (this._sActiveTable === "headerTab") {
+                        this.byId("smartFilterBar").setVisible(false);
                         this.byId("btnAddHdr").setVisible(false);
                         this.byId("btnEditHdr").setVisible(false);
                         this.byId("btnDeleteHdr").setVisible(false);
@@ -2363,6 +2369,7 @@ sap.ui.define([
                         this.byId("btnAddNewHdr").setVisible(true);
                         this.byId("btnTabLayoutHdr").setVisible(false);
                         this.byId("btnDataWrapHdr").setVisible(false);
+                        this.byId("btnFullScreen").setVisible(false);
                         // this.byId("searchFieldHdr").setVisible(false);
 
                         // this.byId("btnAddDtl").setEnabled(false);
@@ -2945,6 +2952,7 @@ sap.ui.define([
                     }
                     else {
                         if (this._sActiveTable === "headerTab") {
+                            this.byId("smartFilterBar").setVisible(false);
                             this.byId("btnAddHdr").setVisible(false);
                             this.byId("btnEditHdr").setVisible(false);
                             this.byId("btnDeleteHdr").setVisible(false);
@@ -2955,6 +2963,7 @@ sap.ui.define([
                             // this.byId("btnAddNewHdr").setVisible(false);
                             this.byId("btnTabLayoutHdr").setVisible(false);
                             this.byId("btnDataWrapHdr").setVisible(false);
+                            this.byId("btnFullScreen").setVisible(false);
                             // this.byId("searchFieldHdr").setVisible(false);
 
                             // this.byId("btnAddDtl").setEnabled(false);
@@ -3042,6 +3051,7 @@ sap.ui.define([
                     }
                     else {
                         if (this._sActiveTable === "headerTab") {
+                            this.byId("smartFilterBar").setVisible(true);
                             this.byId("btnAddHdr").setVisible(true);
                             this.byId("btnEditHdr").setVisible(true);
                             this.byId("btnDeleteHdr").setVisible(true);
@@ -3052,6 +3062,8 @@ sap.ui.define([
                             this.byId("btnAddNewHdr").setVisible(false);
                             this.byId("btnTabLayoutHdr").setVisible(true);
                             this.byId("btnDataWrapHdr").setVisible(true);
+                            this.byId("btnFullScreen").setVisible(true);
+                            this.byId("btnExitFullScreen").setVisible(false);
                             // this.byId("searchFieldHdr").setVisible(true);
 
                             // this.byId("btnAddDtl").setEnabled(true);
@@ -3141,6 +3153,9 @@ sap.ui.define([
                             aNewRows.forEach(item => {
                                 var entitySet = sEntitySet;
                                 var param = {};
+
+                                param["SBU"] = this._sbu;
+                                param["SEQ"] = "0";
     
                                 this._aColumns[this._sActiveTable.replace("Tab","")].forEach(col => {
                                     if (col.Editable || col.Creatable) {
@@ -3162,7 +3177,7 @@ sap.ui.define([
                                 })
     
                                 if (this._sActiveTable === "detailTab") param["COSTCOMPCD"] = this.getView().getModel("ui").getData().activeComp;
-                                // console.log(entitySet, param)
+                                console.log(entitySet, param)
                                 this._oModel.create(entitySet, param, mParameters);
                             })
     
@@ -3171,6 +3186,10 @@ sap.ui.define([
                                 Common.closeProcessingDialog(me);
                             }
                             else {
+                                console.log(this._oModel);
+                                Common.closeProcessingDialog(me);
+                                // return;
+
                                 this._oModel.submitChanges({
                                     groupId: "update",
                                     success: function (oData, oResponse) {
@@ -3185,7 +3204,7 @@ sap.ui.define([
                                                 aNewRows.forEach((nr, nrIndex) => {
                                                     if (nrIndex === respIdx) {
                                                         //set SEQ assigned from backend
-                                                        nr.SEQ = oMessage.message;
+                                                        nr.SEQ = oMessage.message.replace(/^0+/, '');
 
                                                         //merge data
                                                         aData.push(nr);
@@ -3201,52 +3220,55 @@ sap.ui.define([
                                         me.byId(me._sActiveTable).bindRows("/rows");
 
                                         if (me._sActiveTable === "headerTab") {
+                                            me.byId("smartFilterBar").setVisible(true);
                                             me.byId("btnAddHdr").setVisible(true);
                                             me.byId("btnEditHdr").setVisible(true);
                                             me.byId("btnDeleteHdr").setVisible(true);
                                             me.byId("btnRefreshHdr").setVisible(true);
                                             me.byId("btnSaveHdr").setVisible(false);
                                             me.byId("btnCancelHdr").setVisible(false);
-                                            me.byId("btnCopyHdr").setVisible(true);
+                                            // me.byId("btnCopyHdr").setVisible(true);
                                             me.byId("btnAddNewHdr").setVisible(false);
                                             me.byId("btnTabLayoutHdr").setVisible(true);
                                             me.byId("btnDataWrapHdr").setVisible(true);
+                                            me.byId("btnFullScreen").setVisible(true);
+                                            me.byId("btnExitFullScreen").setVisible(false);
                                             // me.byId("searchFieldHdr").setVisible(true);
 
-                                            me.byId("btnAddDtl").setEnabled(true);
-                                            me.byId("btnEditDtl").setEnabled(true);
-                                            me.byId("btnDeleteDtl").setEnabled(true);
-                                            me.byId("btnRefreshDtl").setEnabled(true);
-                                            // me.byId("searchFieldDtl").setEnabled(true);
-                                            me.byId("btnTabLayoutDtl").setEnabled(true);
-                                            me.byId("btnDataWrapDtl").setEnabled(true);
+                                            // me.byId("btnAddDtl").setEnabled(true);
+                                            // me.byId("btnEditDtl").setEnabled(true);
+                                            // me.byId("btnDeleteDtl").setEnabled(true);
+                                            // me.byId("btnRefreshDtl").setEnabled(true);
+                                            // // me.byId("searchFieldDtl").setEnabled(true);
+                                            // me.byId("btnTabLayoutDtl").setEnabled(true);
+                                            // me.byId("btnDataWrapDtl").setEnabled(true);
 
                                             me.getView().getModel("counts").setProperty("/header", aData.length);
                                         }
-                                        else if (me._sActiveTable === "detailTab") {
-                                            me.byId("btnAddDtl").setVisible(true);
-                                            me.byId("btnEditDtl").setVisible(true);
-                                            me.byId("btnDeleteDtl").setVisible(true);
-                                            me.byId("btnRefreshDtl").setVisible(true);
-                                            me.byId("btnSaveDtl").setVisible(false);
-                                            me.byId("btnCancelDtl").setVisible(false);
-                                            // me.byId("btnCopyDtl").setVisible(false);
-                                            me.byId("btnAddNewDtl").setVisible(false);
-                                            // me.byId("searchFieldDtl").setVisible(true);
-                                            me.byId("btnTabLayoutDtl").setVisible(true);
-                                            me.byId("btnDataWrapDtl").setVisible(true);
+                                        // else if (me._sActiveTable === "detailTab") {
+                                        //     me.byId("btnAddDtl").setVisible(true);
+                                        //     me.byId("btnEditDtl").setVisible(true);
+                                        //     me.byId("btnDeleteDtl").setVisible(true);
+                                        //     me.byId("btnRefreshDtl").setVisible(true);
+                                        //     me.byId("btnSaveDtl").setVisible(false);
+                                        //     me.byId("btnCancelDtl").setVisible(false);
+                                        //     // me.byId("btnCopyDtl").setVisible(false);
+                                        //     me.byId("btnAddNewDtl").setVisible(false);
+                                        //     // me.byId("searchFieldDtl").setVisible(true);
+                                        //     me.byId("btnTabLayoutDtl").setVisible(true);
+                                        //     me.byId("btnDataWrapDtl").setVisible(true);
 
-                                            me.byId("btnAddHdr").setEnabled(true);
-                                            me.byId("btnEditHdr").setEnabled(true);
-                                            me.byId("btnDeleteHdr").setEnabled(true);
-                                            me.byId("btnRefreshHdr").setEnabled(true);
-                                            me.byId("btnCopyHdr").setEnabled(true);
-                                            me.byId("btnTabLayoutHdr").setEnabled(true);
-                                            me.byId("btnDataWrapHdr").setEnabled(true);
-                                            // me.byId("searchFieldHdr").setEnabled(true);
+                                        //     me.byId("btnAddHdr").setEnabled(true);
+                                        //     me.byId("btnEditHdr").setEnabled(true);
+                                        //     me.byId("btnDeleteHdr").setEnabled(true);
+                                        //     me.byId("btnRefreshHdr").setEnabled(true);
+                                        //     me.byId("btnCopyHdr").setEnabled(true);
+                                        //     me.byId("btnTabLayoutHdr").setEnabled(true);
+                                        //     me.byId("btnDataWrapHdr").setEnabled(true);
+                                        //     // me.byId("searchFieldHdr").setEnabled(true);
 
-                                            me.getView().getModel("counts").setProperty("/detail", aData.length);
-                                        }
+                                        //     me.getView().getModel("counts").setProperty("/detail", aData.length);
+                                        // }
 
                                         if (me._aColFilters.length > 0) { me.setColumnFilters(me._sActiveTable); }
                                         if (me._aColSorters.length > 0) { me.setColumnSorters(me._sActiveTable); }
@@ -3254,7 +3276,7 @@ sap.ui.define([
                                         me._dataMode = "READ";
                                         Common.closeProcessingDialog(me);
                                         me.setRowReadMode();                                        
-                                        // me.refreshData();
+                                        me.refreshData();
                                     },
                                     error: function () {
                                         Common.closeProcessingDialog(me);
@@ -3331,54 +3353,61 @@ sap.ui.define([
                                 Common.closeProcessingDialog(me);
                             }
                             else {
+                                // console.log(this._oModel);
+                                // Common.closeProcessingDialog(me);
+                                // return;
+
                                 this._oModel.submitChanges({
                                     groupId: "update",
                                     success: function (oData, oResponse) {
                                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                         if (me._sActiveTable === "headerTab") {
+                                            me.byId("smartFilterBar").setVisible(true);
                                             me.byId("btnAddHdr").setVisible(true);
                                             me.byId("btnEditHdr").setVisible(true);
                                             me.byId("btnDeleteHdr").setVisible(true);
                                             me.byId("btnRefreshHdr").setVisible(true);
                                             me.byId("btnSaveHdr").setVisible(false);
                                             me.byId("btnCancelHdr").setVisible(false);
-                                            me.byId("btnCopyHdr").setVisible(true);
+                                            // me.byId("btnCopyHdr").setVisible(true);
                                             me.byId("btnAddNewHdr").setVisible(false);
                                             me.byId("btnTabLayoutHdr").setVisible(true);
                                             me.byId("btnDataWrapHdr").setVisible(true);
+                                            me.byId("btnFullScreen").setVisible(true);
+                                            me.byId("btnExitFullScreen").setVisible(false);
                                             // me.byId("searchFieldHdr").setVisible(true);
 
-                                            me.byId("btnAddDtl").setEnabled(true);
-                                            me.byId("btnEditDtl").setEnabled(true);
-                                            me.byId("btnDeleteDtl").setEnabled(true);
-                                            me.byId("btnRefreshDtl").setEnabled(true);
-                                            // me.byId("searchFieldDtl").setEnabled(true);
-                                            me.byId("btnTabLayoutDtl").setEnabled(true);
-                                            me.byId("btnDataWrapDtl").setEnabled(true);
+                                            // me.byId("btnAddDtl").setEnabled(true);
+                                            // me.byId("btnEditDtl").setEnabled(true);
+                                            // me.byId("btnDeleteDtl").setEnabled(true);
+                                            // me.byId("btnRefreshDtl").setEnabled(true);
+                                            // // me.byId("searchFieldDtl").setEnabled(true);
+                                            // me.byId("btnTabLayoutDtl").setEnabled(true);
+                                            // me.byId("btnDataWrapDtl").setEnabled(true);
                                         }
-                                        else if (me._sActiveTable === "detailTab") {
-                                            me.byId("btnAddDtl").setVisible(true);
-                                            me.byId("btnEditDtl").setVisible(true);
-                                            me.byId("btnDeleteDtl").setVisible(true);
-                                            me.byId("btnRefreshDtl").setVisible(true);
-                                            me.byId("btnSaveDtl").setVisible(false);
-                                            me.byId("btnCancelDtl").setVisible(false);
-                                            // me.byId("btnCopyDtl").setVisible(false);
-                                            me.byId("btnAddNewDtl").setVisible(false);
-                                            // me.byId("searchFieldDtl").setVisible(true);
-                                            me.byId("btnTabLayoutDtl").setVisible(true);
-                                            me.byId("btnDataWrapDtl").setVisible(true);
+                                        // else if (me._sActiveTable === "detailTab") {
+                                        //     me.byId("btnAddDtl").setVisible(true);
+                                        //     me.byId("btnEditDtl").setVisible(true);
+                                        //     me.byId("btnDeleteDtl").setVisible(true);
+                                        //     me.byId("btnRefreshDtl").setVisible(true);
+                                        //     me.byId("btnSaveDtl").setVisible(false);
+                                        //     me.byId("btnCancelDtl").setVisible(false);
+                                        //     // me.byId("btnCopyDtl").setVisible(false);
+                                        //     me.byId("btnAddNewDtl").setVisible(false);
+                                        //     // me.byId("searchFieldDtl").setVisible(true);
+                                        //     me.byId("btnTabLayoutDtl").setVisible(true);
+                                        //     me.byId("btnDataWrapDtl").setVisible(true);
                     
-                                            me.byId("btnAddHdr").setEnabled(true);
-                                            me.byId("btnEditHdr").setEnabled(true);
-                                            me.byId("btnDeleteHdr").setEnabled(true);
-                                            me.byId("btnRefreshHdr").setEnabled(true);
-                                            me.byId("btnCopyHdr").setEnabled(true);
-                                            me.byId("btnTabLayoutHdr").setEnabled(true);
-                                            me.byId("btnDataWrapHdr").setEnabled(true);
-                                            // me.byId("searchFieldHdr").setEnabled(true);
-                                        }
+                                        //     me.byId("btnAddHdr").setEnabled(true);
+                                        //     me.byId("btnEditHdr").setEnabled(true);
+                                        //     me.byId("btnDeleteHdr").setEnabled(true);
+                                        //     me.byId("btnRefreshHdr").setEnabled(true);
+                                        //     me.byId("btnCopyHdr").setEnabled(true);
+                                        //     me.byId("btnTabLayoutHdr").setEnabled(true);
+                                        //     me.byId("btnDataWrapHdr").setEnabled(true);
+                                        //     // me.byId("searchFieldHdr").setEnabled(true);
+                                        // }
         
                                         if (me._aColFilters.length > 0) { me.setColumnFilters(me._sActiveTable); }
                                         if (me._aColSorters.length > 0) { me.setColumnSorters(me._sActiveTable); }

@@ -40,6 +40,14 @@
                 <Property Name="CUSTGRP" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Customer Group"/>
                 <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="20" sap:label="Name"/>
             </EntityType>
+            <EntityType Name="ZVB_3DERP_GENUOM_SHType" sap:label="UOM" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UOM"/>
+                </Key>
+                <Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="30" sap:label="Measurement Unit Txt" sap:quickinfo="Unit of Measurement Text (Maximum 30 Characters)"/>
+                <Property Name="ANDEC" Type="Edm.Int16" sap:label="Decimal Rounding" sap:quickinfo="No. of decimal places for rounding"/>
+            </EntityType>
             <EntityType Name="ZVB_3DERP_MATTYPE_SHType" sap:label="3DERP: Material Type" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="MaterialType"/>
@@ -56,6 +64,7 @@
                     <PropertyRef Name="Plantcd"/>
                     <PropertyRef Name="Vendorcd"/>
                     <PropertyRef Name="Uom"/>
+                    <PropertyRef Name="Uom2"/>
                 </Key>
                 <Property Name="Sbu" Type="Edm.String" Nullable="false" MaxLength="1" sap:value-list="standard"/>
                 <Property Name="Mattyp" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Material Type" sap:value-list="standard"/>
@@ -63,6 +72,7 @@
                 <Property Name="Plantcd" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Plant" sap:value-list="standard"/>
                 <Property Name="Vendorcd" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Supplier" sap:quickinfo="Account Number of Supplier" sap:value-list="standard"/>
                 <Property Name="Uom" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="UOM" sap:quickinfo="Data Element of 3DERP UOM field" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="Uom2" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="UOM" sap:quickinfo="Data Element of 3DERP UOM field" sap:value-list="standard" sap:semantics="unit-of-measure"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_PURPLANT_SHType" sap:label="3DERP: Purchasing Plant" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -77,14 +87,6 @@
                 </Key>
                 <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="SBU" sap:quickinfo="ERP SBU"/>
             </EntityType>
-            <EntityType Name="ZVB_3DERP_UOM_SHType" sap:label="UOM" sap:value-list="true" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="MSEHI"/>
-                </Key>
-                <Property Name="MSEHI" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
-                <Property Name="MSEHL" Type="Edm.String" MaxLength="30" sap:label="Measurement Unit Txt" sap:quickinfo="Unit of Measurement Text (Maximum 30 Characters)"/>
-                <Property Name="ANDEC" Type="Edm.Int16" sap:label="Decimal Rounding" sap:quickinfo="No. of decimal places for rounding"/>
-            </EntityType>
             <EntityType Name="ZVB_3DERP_VENDOR_SHType" sap:label="3DERP: Vendor" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="Vendor"/>
@@ -93,14 +95,23 @@
                 <Property Name="Description" Type="Edm.String" MaxLength="35" sap:label="Name" sap:quickinfo="Name 1"/>
                 <Property Name="CountryCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country/Region Key"/>
             </EntityType>
+            <EntityType Name="ZVB_UOMINFO2_SHType" sap:label="UOM ID and DESC filter AAAADL and spras" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UOM"/>
+                </Key>
+                <Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="DESCRIPTION" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="30" sap:label="Measurement Unit Txt" sap:quickinfo="Unit of Measurement Text (Maximum 30 Characters)"/>
+                <Property Name="strANDEC" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
             <EntityContainer Name="ZVB_3DERP_PURALLOW_FILTER_CDS_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="ZVB_3DERP_CUSTGRP_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_CUSTGRP_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_GENUOM_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_GENUOM_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_MATTYPE_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_MATTYPE_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_PURALLOW_FILTER" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_PURALLOW_FILTERType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_PURPLANT_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_PURPLANT_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_SBU_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_SBU_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="ZVB_3DERP_UOM_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_UOM_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_VENDOR_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_VENDOR_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_UOMINFO2_SH" EntityType="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_UOMINFO2_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
             </EntityContainer>
             <Annotations Target="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_PURALLOW_FILTERType/Sbu" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ValueList">
@@ -217,17 +228,40 @@
             <Annotations Target="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_PURALLOW_FILTERType/Uom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="UOM"/>
-                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_UOM_SH"/>
+                        <PropertyValue Property="Label" String="UOM ID and DESC filter AAAADL and spras"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_UOMINFO2_SH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="Uom"/>
-                                    <PropertyValue Property="ValueListProperty" String="MSEHI"/>
+                                    <PropertyValue Property="ValueListProperty" String="UOM"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="MSEHL"/>
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="strANDEC"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PURALLOW_FILTER_CDS.ZVB_3DERP_PURALLOW_FILTERType/Uom2" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="UOM"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_GENUOM_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Uom2"/>
+                                    <PropertyValue Property="ValueListProperty" String="UOM"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
                                     <PropertyValue Property="ValueListProperty" String="ANDEC"/>
