@@ -21,6 +21,7 @@ sap.ui.define([
         "use strict";
 
         var me;
+        var _promiseResult;
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
         var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "YYYY-MM-dd" });
         var sapDateFormat2 = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyyMMdd" });
@@ -198,12 +199,29 @@ sap.ui.define([
             }, 
 
             getAppAction: async function() {
+                var csAction = "change";
                 if (sap.ushell.Container !== undefined) {
                     const fullHash = new HashChanger().getHash(); 
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
                     const shellHash = urlParsing.parseShellHash(fullHash); 
                     const sAction = shellHash.action;
+                    csAction = shellHash.action;
                 }
+
+                var DisplayStateModel = new JSONModel();
+                var DisplayData = {
+                    sAction: csAction,
+                    visible: csAction === "display" ? false : true
+                }
+
+                this.getView().getModel("ui").setProperty("/DisplayMode", csAction);
+
+                DisplayStateModel.setData(DisplayData);
+                this.getView().setModel(DisplayStateModel, "DisplayActionModel");
+
+                // this.byId("btnAddHdr").setVisible(csAction === "display" ? false : true);
+                // this.byId("btnEditHdr").setVisible(csAction === "display" ? false : true);
+                // this.byId("btnDeleteHdr").setVisible(csAction === "display" ? false : true);
             },
 
             addDateFilters: function (aSmartFilter) {
@@ -233,7 +251,7 @@ sap.ui.define([
                 }
             },
 
-            onSBUChange: function (oEvent) {
+            onSBUChange: async function (oEvent) {
                 // alert("onSBUChange");
                 this._sbuChange = true;
                 
@@ -241,63 +259,79 @@ sap.ui.define([
                 var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
                 var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_PURALLOW_FILTER_CDS");      
 
-                // console.log(vSBU, oModel);
+                console.log(vSBU, oModel);
 
-                oModel.read("/ZVB_3DERP_PURPLANT_SH", {
-                    success: function (oData, oResponse) {
-                        // var aData = new JSONModel({ results: oData.results });
-                        // me.getView().setModel(oData.results, "PLANT_MODEL");
-                        me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
-                    },
-                    error: function (err) { }
+                _promiseResult = new Promise((resolve, reject) => {
+                    oModel.read("/ZVB_3DERP_MATTYPE_SH", {
+                        urlParameters: {
+                            "$filter": "SBU eq '" + vSBU + "'"
+                        },
+                        success: function (oData, oResponse) {
+                            console.log("MATTYP_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "MATTYP_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
                 });
+                await _promiseResult;
 
-                oModel.read("/ZVB_3DERP_MATTYPE_SH", {
-                    urlParameters: {
-                        "$filter": "SBU eq '" + vSBU + "'"
-                    },
-                    success: function (oData, oResponse) {
-                        me.getView().setModel(new JSONModel(oData.results), "MATTYP_MODEL");
-                        // if (oData.results.length > 0) {
-                        //     var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
-                        //     me.getView().setModel(aData, "MATTYP_MODEL");
-                        // }
-                        // else {
-                        //     var aData = new JSONModel({ results: [] });
-                        //     me.getView().setModel(aData, "MATTYP_MODEL");
-                        // }
-                    },
-                    error: function (err) { }
+                _promiseResult = new Promise((resolve, reject) => {
+                    oModel.read("/ZVB_3DERP_PURPLANT_SH", {
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(oData.results, "PLANT_MODEL");
+                            console.log("PLANT_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
                 });
+                await _promiseResult;
 
-                oModel.read("/ZVB_3DERP_CUSTGRP_SH", {
+                _promiseResult = new Promise((resolve, reject) => {
+                    oModel.read("/ZVB_3DERP_CUSTGRP_SH", {
 
-                    success: function (oData, oResponse) {
-                        // var aData = new JSONModel({ results: oData.results });
-                        // me.getView().setModel(aData.results, "CUSTGRP_MODEL");
-                        me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
-                    },
-                    error: function (err) { }
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData.results, "CUSTGRP_MODEL");
+                            console.log("CUSTGRP_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
                 });
+                await _promiseResult;
 
-                oModel.read("/ZVB_3DERP_VENDOR_SH", {
-                    success: function (oData, oResponse) {
-                        // var aData = new JSONModel({ results: oData.results });
-                        // me.getView().setModel(aData, "VENDOR_MODEL");
-                        me.getView().setModel(new JSONModel(oData.results), "VENDOR_MODEL");
-                    },
-                    error: function (err) { }
+                _promiseResult = new Promise((resolve, reject) => {
+                    oModel.read("/ZVB_3DERP_VENDOR_SH", {
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData, "VENDOR_MODEL");
+                            console.log("VENDOR_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "VENDOR_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
                 });
+                await _promiseResult;
 
-                oModel.read("/ZVB_UOMINFO2_SH", {
-                    success: function (oData, oResponse) {
-                        console.log(oData.results);
-                        // var aData = new JSONModel({ results: oData.results });
-                        // me.getView().setModel(aData, "UOM_MODEL");
-                        me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
-                    },
-                    error: function (err) { }
+                _promiseResult = new Promise((resolve, reject) => {
+                    oModel.read("/ZVB_UOMINFO2_SH", {
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData, "UOM_MODEL");
+                            console.log("UOM_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
                 });
+                await _promiseResult;
 
             },
 
@@ -325,69 +359,99 @@ sap.ui.define([
                 this.getHeaderData();
             },
 
-            getValueHelp() {
+            async getValueHelp() {
+                // alert("get Value Help");
+                var me = this;                
+                var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                var FoModel = this.getOwnerComponent().getModel("/sap/opu/odata/sap/ZVB_3DERP_PURALLOW_FILTER_CDS");    
 
-                // me.getView().setModel(new JSONModel(me.getView().getModel("sfmCustgrp").getData()), "CUSTGRP_MODEL");
-                this.getView().setModel(new JSONModel(this.getView().getModel("sfmCustgrp").getData()), "CUSTGRP2_MODEL");
-                // var vhModel = this.getOwnerComponent().getModel("ZVB_3DERP_PURALLOW_FILTER_CDS");
-
-                // vhModel.read('/ZVB_3DERP_PURPLANT_SH', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
-
-                this._oModel.read('/CustGrpVHSet', {
-                    async: false,
-                    success: function (oData) {
+                FoModel.read("/ZVB_3DERP_CUSTGRP_SH", {
+                    success: function (oData, oResponse) {
+                        // var aData = new JSONModel({ results: oData.results });
+                        // me.getView().setModel(oData.results, "PLANT_MODEL");
+                        console.log("CUSTGRP_MODEL", oData.results);
                         me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
                     },
                     error: function (err) { }
-                })
+                });
 
+                // this._oModel
 
+                _promiseResult = new Promise((resolve, reject) => {
+                    FoModel.read("/ZVB_3DERP_PURPLANT_SH", {
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(oData.results, "PLANT_MODEL");
+                            console.log("PLANT_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "PLANT_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                });
+                await _promiseResult;
 
-                // this._oModel.read('/ComponentVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "COMPONENT_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
+                _promiseResult = new Promise((resolve, reject) => {
+                    FoModel.read("/ZVB_3DERP_MATTYPE_SH", {
+                        urlParameters: {
+                            "$filter": "SBU eq '" + vSBU + "'"
+                        },
+                        success: function (oData, oResponse) {
+                            console.log("MATTYP_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "MATTYP_MODEL");
+                            // if (oData.results.length > 0) {
+                            //     var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
+                            //     me.getView().setModel(aData, "MATTYP_MODEL");
+                            // }
+                            // else {
+                            //     var aData = new JSONModel({ results: [] });
+                            //     me.getView().setModel(aData, "MATTYP_MODEL");
+                            // }
+                        },
+                        error: function (err) { }
+                    });
+                });
+                await _promiseResult;
 
-                // this._oModel.read('/SalesTermVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "SALESTERM_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
+                _promiseResult = new Promise((resolve, reject) => {
+                    FoModel.read("/ZVB_3DERP_CUSTGRP_SH", {
 
-                // this._oModel.read('/CustGrpVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData.results, "CUSTGRP_MODEL");
+                            console.log("CUSTGRP_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "CUSTGRP_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                });
+                await _promiseResult;
 
-                // this._oModel.read('/WeaveTypeVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "WVTYP_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
+                _promiseResult = new Promise((resolve, reject) => {
+                    FoModel.read("/ZVB_3DERP_VENDOR_SH", {
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData, "VENDOR_MODEL");
+                            console.log("VENDOR_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "VENDOR_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                });
+                await _promiseResult;
 
-                // this._oModel.read('/StatusVHSet', {
-                //     async: false,
-                //     success: function (oData) {
-                //         me.getView().setModel(new JSONModel(oData.results), "STATUS_MODEL");
-                //     },
-                //     error: function (err) { }
-                // })
+                _promiseResult = new Promise((resolve, reject) => {
+                    FoModel.read("/ZVB_UOMINFO2_SH", {
+                        success: function (oData, oResponse) {
+                            console.log(oData.results);
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData, "UOM_MODEL");
+                            console.log("UOM_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                });
+                await _promiseResult;
             },
 
             getHeaderData() {

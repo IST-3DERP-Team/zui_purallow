@@ -131,12 +131,12 @@
                                                 icon="sap-icon://add"
                                                 press="onCreate" 
                                                 tooltip="{ddtext>/ADD}"
-                                                visible="true"/>
+                                                visible="{DisplayActionModel>/visible}"/>
                                             <Button id="btnEditHdr" 
                                                 icon="sap-icon://edit"
                                                 press="onEdit"
                                                 tooltip="{ddtext>/EDIT}"
-                                                visible="true"/>
+                                                visible="{DisplayActionModel>/visible}"/>
                                             <Button id="btnAddNewHdr" 
                                                 icon="sap-icon://add"
                                                 press="onAddNewRow" 
@@ -156,7 +156,7 @@
                                                 icon="sap-icon://delete"
                                                 press="onDelete"
                                                 tooltip="{ddtext>/DELETE}"
-                                                visible="true"/>
+                                                visible="{DisplayActionModel>/visible}"/>
                                             <!-- <Button id="btnCopyHdr" 
                                                 icon="sap-icon://copy"
                                                 press="onCopy"
