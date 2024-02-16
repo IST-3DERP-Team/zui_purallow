@@ -79,9 +79,9 @@
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration6" key="Uom" label="{ddtext>/UOM}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
+                        <smartfilterbar:ControlConfiguration id="_IDGenControlConfiguration6" key="UOM" label="{ddtext>/UOM}" groupId="_BASIC" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false" width="300px" >
                             <smartfilterbar:customControl>
-                                <MultiInput id="sffUom" name="Uom" maxSuggestionWidth="400px" />
+                                <MultiInput id="sffUOM" name="UOM" maxSuggestionWidth="400px" />
                             </smartfilterbar:customControl>
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>

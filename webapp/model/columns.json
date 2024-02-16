@@ -51,7 +51,7 @@
     ],
     "tvh_uom": [
         {"ColumnName": "UOM", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "strANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true}
+        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
+        ,{"ColumnName": "strANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true}
     ]
 }
