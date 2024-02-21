@@ -29,6 +29,12 @@
                 "SuggestionItems": {"path": "UOM_MODEL>/", "text": "{UOM_MODEL>UOM}", "additionalText": "{UOM_MODEL>DESCRIPTION}", "maxSuggestionWidth": "300px"},
                 "columns": "tvh_uom"
             }
+        },
+        {"ColumnName": "PURALEDIT", "TextFormatMode": "ValueKey",
+            "ValueHelp": {"show": true, "items": {"path": "PURALLOWEDIT_MODEL", "value": "FIELD2", "text": "FIELD3" },
+                "SuggestionItems": {"path": "PURALLOWEDIT_MODEL>/", "text": "{PURALLOWEDIT_MODEL>FIELD2}", "additionalText": "{PURALLOWEDIT_MODEL>FIELD3}", "maxSuggestionWidth": "300px"},
+                "columns": "tvh_purallowedit"
+            }
         }
     ],
     "tvh_mattyp": [
@@ -53,5 +59,12 @@
         {"ColumnName": "UOM", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
         {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
         ,{"ColumnName": "strANDEC", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true}
+    ],
+    "tvh_purallowedit": [
+        {"ColumnName": "SBU", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "FIELD1", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "SEQNO", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "FIELD2", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "FIELD3", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": true}
     ]
 }

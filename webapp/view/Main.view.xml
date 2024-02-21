@@ -137,11 +137,11 @@
                                                 press="onEdit"
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="{DisplayActionModel>/visible}"/>
-                                            <Button id="btnAddNewHdr" 
+                                            <!-- <Button id="btnAddNewHdr" 
                                                 icon="sap-icon://add"
                                                 press="onAddNewRow" 
                                                 tooltip="{ddtext>/ADD}"
-                                                visible="false"/>
+                                                visible="false"/> -->
                                             <Button id="btnSaveHdr" 
                                                 icon="sap-icon://save"
                                                 press=".onBatchSave" 

@@ -137,7 +137,8 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "INFO_INPUT_REQD_FIELDS"}); 
                 oDDTextParam.push({CODE: "INFO_NO_DATA_MODIFIED"}); 
                 oDDTextParam.push({CODE: "INFO_DATA_COPIED"}); 
-                oDDTextParam.push({CODE: "INFO_SBU_REQUIRED"});                
+                oDDTextParam.push({CODE: "INFO_SBU_REQUIRED"});  
+                oDDTextParam.push({CODE: "INFO_DATE_OVERLAP"});                
 
                 //CONFIRM DIALOG LABELS
                 oDDTextParam.push({CODE: "CONFIRM_DISREGARD_CHANGE"});
@@ -326,6 +327,23 @@ sap.ui.define([
                             // me.getView().setModel(aData, "UOM_MODEL");
                             console.log("UOM_MODEL", oData.results);
                             me.getView().setModel(new JSONModel(oData.results), "UOM_MODEL");
+                        },
+                        error: function (err) { }
+                    });
+                    resolve();
+                });
+                await _promiseResult;
+
+                _promiseResult = new Promise((resolve, reject) => {
+                    this._oModel.read("/PURALLOWEDITSet", {
+                        urlParameters: {
+                            "$filter": "SBU eq '" + vSBU + "'"
+                        },
+                        success: function (oData, oResponse) {
+                            // var aData = new JSONModel({ results: oData.results });
+                            // me.getView().setModel(aData, "UOM_MODEL");
+                            console.log("PURALLOWEDIT_MODEL", oData.results);
+                            me.getView().setModel(new JSONModel(oData.results), "PURALLOWEDIT_MODEL");
                         },
                         error: function (err) { }
                     });
@@ -537,6 +555,8 @@ sap.ui.define([
                                 }
                                 else item.ACTIVE = "";
                             });
+
+                            me.getView().setModel(new JSONModel(oData.results), "HEADER_MODEL");
                             
                             // me.getDetailData(false);
                         }
@@ -943,11 +963,11 @@ sap.ui.define([
                         this.byId("btnSaveHdr").setVisible(false);
                         this.byId("btnCancelHdr").setVisible(false);
                         // this.byId("btnCopyHdr").setVisible(true);
-                        this.byId("btnAddNewHdr").setVisible(false);
+                        // this.byId("btnAddNewHdr").setVisible(false);
                         this.byId("btnTabLayoutHdr").setVisible(true);
                         this.byId("btnDataWrapHdr").setVisible(true);
                         this.byId("btnFullScreen").setVisible(true);
-                        this.byId("btnExitFullScreen").setVisible(true);
+                        this.byId("btnExitFullScreen").setVisible(false);
                         // this.byId("searchFieldHdr").setVisible(true);
 
                         // this.byId("btnAddDtl").setEnabled(true);
@@ -1008,6 +1028,16 @@ sap.ui.define([
             },
 
             deleteData() {
+                //DO NOT PROCEED IF DISPLAY MODE EQ display
+                if(this.getView().getModel("ui").getProperty("/DisplayMode") === "display") {
+                    return;
+                }
+
+                if(this._sbu === "" || this._sbu === undefined) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SBU_REQUIRED"])
+                    return;
+                }
+
                 if (this._dataMode === "READ") {
                     var oTable = this.byId(this._sActiveTable);
                     var aSelIndices = oTable.getSelectedIndices();
@@ -1120,6 +1150,20 @@ sap.ui.define([
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
                     }
                 }          
+            },
+
+            areDateRangesOverlapping(range1, range2) {
+                // Parse the input strings into Date objects
+                const startDate1 = new Date(range1.start);
+                const endDate1 = new Date(range1.end);
+                const startDate2 = new Date(range2.start);
+                const endDate2 = new Date(range2.end);
+            
+                // Check for overlap
+                return (
+                    (startDate1 <= endDate2 && endDate1 >= startDate2) ||
+                    (startDate2 <= endDate1 && endDate2 >= startDate1)
+                );
             },
 
             onRefresh: function (oEvent) {
@@ -1263,49 +1307,71 @@ sap.ui.define([
                 var vColDecPlaces = oSource.getBindingInfo("value").constraints.scale;
                 var vColLength = oSource.getBindingInfo("value").constraints.precision;
 
-                if (oEvent.getParameters().value.split(".")[0].length > (vColLength - vColDecPlaces)) {
-                    oEvent.getSource().setValueState("Error");
-                    oEvent.getSource().setValueStateText("Enter a number with a maximum whole number length of " + (vColLength - vColDecPlaces));
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+                var UOMValue = this.byId(this._sActiveTable).getModel().getProperty(sRowPath + '/UOM');
+                var iUOMDec = 0;
 
+                //CHECK IF HAS UOM VALUE
+                if (UOMValue === "" && oSource.getBindingInfo("value").parts[0].path !== "PCTALLOW" && oSource.getBindingInfo("value").parts[0].path !== "PRIOSEQ") {
+                    oEvent.getSource().setValueState("Error");
+                    oEvent.getSource().setValueStateText("Select a valid UOM first.");
                     if (this._validationErrors.filter(fItem => fItem === oEvent.getSource().getId()).length === 0) {
                         this._validationErrors.push(oEvent.getSource().getId());
                     }
-                }
-                else if (oEvent.getParameters().value.split(".").length > 1) {
-                    if (vColDecPlaces === 0) {
+                } else {
+                    //GET UOM DECIMAL
+                    if (oSource.getBindingInfo("value").parts[0].path !== "PCTALLOW" && oSource.getBindingInfo("value").parts[0].path !== "PRIOSEQ") { 
+                    this.getView().getModel("UOM_MODEL").getData().filter(fItem => fItem.UOM === UOMValue)
+                        .forEach((item) => {
+                            // console.log(item.MSEHI);
+                            vColDecPlaces = item.strANDEC;
+                        })
+                    }
+
+                    if (oEvent.getParameters().value.split(".")[0].length > (vColLength - vColDecPlaces)) {
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Enter a number without decimal place/s");
-                        
+                        oEvent.getSource().setValueStateText("Enter a number with a maximum whole number length of " + (vColLength - vColDecPlaces));
+
                         if (this._validationErrors.filter(fItem => fItem === oEvent.getSource().getId()).length === 0) {
                             this._validationErrors.push(oEvent.getSource().getId());
                         }
                     }
-                    else {
-                        if (oEvent.getParameters().value.split(".")[1].length > vColDecPlaces) {
+                    else if (oEvent.getParameters().value.split(".").length > 1) {
+                        if (vColDecPlaces === 0) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("Enter a number with a maximum of " + vColDecPlaces.toString() + " decimal places");
-                            
+                            oEvent.getSource().setValueStateText("Enter a number without decimal place/s");
+
                             if (this._validationErrors.filter(fItem => fItem === oEvent.getSource().getId()).length === 0) {
                                 this._validationErrors.push(oEvent.getSource().getId());
                             }
                         }
                         else {
-                            oEvent.getSource().setValueState("None");
-                            this._validationErrors.forEach((item, index) => {
-                                if (item === oEvent.getSource().getId()) {
-                                    this._validationErrors.splice(index, 1);
+                            if (oEvent.getParameters().value.split(".")[1].length > vColDecPlaces) {
+                                oEvent.getSource().setValueState("Error");
+                                oEvent.getSource().setValueStateText("Enter a number with a maximum of " + vColDecPlaces.toString() + " decimal places");
+
+                                if (this._validationErrors.filter(fItem => fItem === oEvent.getSource().getId()).length === 0) {
+                                    this._validationErrors.push(oEvent.getSource().getId());
                                 }
-                            })
+                            }
+                            else {
+                                oEvent.getSource().setValueState("None");
+                                this._validationErrors.forEach((item, index) => {
+                                    if (item === oEvent.getSource().getId()) {
+                                        this._validationErrors.splice(index, 1);
+                                    }
+                                })
+                            }
                         }
                     }
-                }
-                else {
-                    oEvent.getSource().setValueState("None");
-                    this._validationErrors.forEach((item, index) => {
-                        if (item === oEvent.getSource().getId()) {
-                            this._validationErrors.splice(index, 1);
-                        }
-                    })
+                    else {
+                        oEvent.getSource().setValueState("None");
+                        this._validationErrors.forEach((item, index) => {
+                            if (item === oEvent.getSource().getId()) {
+                                this._validationErrors.splice(index, 1);
+                            }
+                        })
+                    }
                 }
 
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
@@ -2415,10 +2481,16 @@ sap.ui.define([
             },
 
             createData() {
+                //DO NOT PROCEED IF DISPLAY MODE EQ display
+                if(this.getView().getModel("ui").getProperty("/DisplayMode") === "display") {
+                    return;
+                }
+
                 if(this._sbu === "" || this._sbu === undefined) {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SBU_REQUIRED"])
                     return;
-                }
+                }                
+
                 // alert(this._sActiveTable);
                 if (this._dataMode === "READ") {
                     if (this._sActiveTable === "headerTab") {
@@ -2430,10 +2502,11 @@ sap.ui.define([
                         this.byId("btnSaveHdr").setVisible(true);
                         this.byId("btnCancelHdr").setVisible(true);
                         // this.byId("btnCopyHdr").setVisible(false);
-                        this.byId("btnAddNewHdr").setVisible(true);
+                        // this.byId("btnAddNewHdr").setVisible(true);
                         this.byId("btnTabLayoutHdr").setVisible(false);
                         this.byId("btnDataWrapHdr").setVisible(false);
                         this.byId("btnFullScreen").setVisible(false);
+                        this.byId("btnExitFullScreen").setVisible(false);
                         // this.byId("searchFieldHdr").setVisible(false);
 
                         // this.byId("btnAddDtl").setEnabled(false);
@@ -2500,6 +2573,14 @@ sap.ui.define([
                 var oTable = this.byId(this._sActiveTable);
                 var aNewRow = [];
                 var oNewRow = {};  
+
+                if(this._sActiveTable === "headerTab") {
+                    var currentDate = new Date();
+                    oNewRow["PURALEDIT"] = "1";
+                    oNewRow["UOM"] = "PC";
+                    oNewRow["EFFDTFROM"] = dateFormat.format(new Date(currentDate));
+                    oNewRow["EFFDTTO"] = dateFormat.format(new Date('9999-12-31'));
+                }                
 
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
@@ -3002,11 +3083,16 @@ sap.ui.define([
             },
 
             editData() {
+                //DO NOT PROCEED IF DISPLAY MODE EQ display
+                if(this.getView().getModel("ui").getProperty("/DisplayMode") === "display") {
+                    return;
+                }
+
                 if(this._sbu === "" || this._sbu === undefined) {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SBU_REQUIRED"])
                     return;
                 }
-
+                
                 if (this._dataMode === "READ") {
                     if (this._sActiveTable === "headerTab") this._bHdrChanged = false;
                     else if (this._sActiveTable === "detailTab") this._bDtlChanged = false;
@@ -3028,6 +3114,7 @@ sap.ui.define([
                             this.byId("btnTabLayoutHdr").setVisible(false);
                             this.byId("btnDataWrapHdr").setVisible(false);
                             this.byId("btnFullScreen").setVisible(false);
+                            this.byId("btnExitFullScreen").setVisible(false);
                             // this.byId("searchFieldHdr").setVisible(false);
 
                             // this.byId("btnAddDtl").setEnabled(false);
@@ -3123,7 +3210,7 @@ sap.ui.define([
                             this.byId("btnSaveHdr").setVisible(false);
                             this.byId("btnCancelHdr").setVisible(false);
                             // this.byId("btnCopyHdr").setVisible(true);
-                            this.byId("btnAddNewHdr").setVisible(false);
+                            // this.byId("btnAddNewHdr").setVisible(false);
                             this.byId("btnTabLayoutHdr").setVisible(true);
                             this.byId("btnDataWrapHdr").setVisible(true);
                             this.byId("btnFullScreen").setVisible(true);
@@ -3183,6 +3270,64 @@ sap.ui.define([
                 var oTable = oEvent.getSource().oParent.oParent;
                 var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
                 this._sActiveTable = sTabId;
+                let iProceed = true;
+
+                if(this._sActiveTable === "headerTab") {
+                        var aNewRows = this.byId(this._sActiveTable).getModel().getData().rows.filter(item => item.NEW === true);
+                        var aEditedRows = this.byId(this._sActiveTable).getModel().getData().rows.filter(item => item.EDITED === true && item.NEW !== true);
+        
+                        let range1 = {};
+                        let range2 = {};
+
+                        //LOOP THRU NEW ROWS
+                        if (aNewRows.length > 0) {
+                            aNewRows.forEach(item => {
+                                //GET NEW ROW EFFECTIVITY DATES
+                                range1 = { start: item["EFFDTFROM"], end: item["EFFDTTO"] };
+
+                                //LOOP THRU HEADER MODEL'S DATA, GET EFFECTIVITY DATES
+                                this.getView().getModel("HEADER_MODEL").getData().filter(fItem => fItem.SBU === this._sbu && fItem.MATTYP === item.MATTYP && fItem.CUSTGRP === item.CUSTGRP && fItem.PLANTCD === item.PLANTCD && fItem.VENDORCD === item.VENDORCD && fItem.UOM === item.UOM)
+                                .forEach(hdrItem => {
+                                    range2 = { start: hdrItem["EFFDTFROM"], end: hdrItem["EFFDTTO"]  };
+                                });
+
+                                if(this.areDateRangesOverlapping(range1, range2)) {
+                                    iProceed = false;
+                                }
+                            })
+                        }
+                        if(!iProceed) {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_DATE_OVERLAP"])
+                            return;
+                        }
+
+                        //LOOP THRU EDITED ROWS
+                        if(aEditedRows.length > 0) {
+                            aEditedRows.forEach(item => {
+                                let iSeq = item.SEQ;
+                                //GET NEW ROW EFFECTIVITY DATES
+                                range1 = { start: item["EFFDTFROM"], end: item["EFFDTTO"] };
+
+                                //LOOP THRU HEADER MODEL'S DATA, GET EFFECTIVITY DATES
+                                //INCLUDE SEQ IN FILTER : NEQ
+                                this.getView().getModel("HEADER_MODEL").getData().filter(fItem =>fItem.SEQ !== iSeq && fItem.SBU === this._sbu && fItem.MATTYP === item.MATTYP && fItem.CUSTGRP === item.CUSTGRP && fItem.PLANTCD === item.PLANTCD && fItem.VENDORCD === item.VENDORCD && fItem.UOM === item.UOM)
+                                .forEach(hdrItem => {
+                                    range2 = { start: hdrItem["EFFDTFROM"], end: hdrItem["EFFDTTO"]  };
+                                });
+
+                                if(this.areDateRangesOverlapping(range1, range2)) {
+                                    iProceed = false;
+                                }
+                            })
+                        }
+                        if(!iProceed) {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_DATE_OVERLAP"])
+                            return;
+                        }
+                }
+
+                // return;
+
                 this.batchSaveData();
             },
 
@@ -3251,7 +3396,7 @@ sap.ui.define([
                             }
                             else {
                                 console.log(this._oModel);
-                                Common.closeProcessingDialog(me);
+                                // Common.closeProcessingDialog(me);
                                 // return;
 
                                 this._oModel.submitChanges({
@@ -3292,7 +3437,7 @@ sap.ui.define([
                                             me.byId("btnSaveHdr").setVisible(false);
                                             me.byId("btnCancelHdr").setVisible(false);
                                             // me.byId("btnCopyHdr").setVisible(true);
-                                            me.byId("btnAddNewHdr").setVisible(false);
+                                            // me.byId("btnAddNewHdr").setVisible(false);
                                             me.byId("btnTabLayoutHdr").setVisible(true);
                                             me.byId("btnDataWrapHdr").setVisible(true);
                                             me.byId("btnFullScreen").setVisible(true);
@@ -3435,7 +3580,7 @@ sap.ui.define([
                                             me.byId("btnSaveHdr").setVisible(false);
                                             me.byId("btnCancelHdr").setVisible(false);
                                             // me.byId("btnCopyHdr").setVisible(true);
-                                            me.byId("btnAddNewHdr").setVisible(false);
+                                            // me.byId("btnAddNewHdr").setVisible(false);
                                             me.byId("btnTabLayoutHdr").setVisible(true);
                                             me.byId("btnDataWrapHdr").setVisible(true);
                                             me.byId("btnFullScreen").setVisible(true);
