@@ -2575,9 +2575,7 @@ sap.ui.define([
                 var oNewRow = {};  
 
                 if(this._sActiveTable === "headerTab") {
-                    var currentDate = new Date();
-                    oNewRow["PURALEDIT"] = "1";
-                    oNewRow["UOM"] = "PC";
+                    var currentDate = new Date();                    
                     oNewRow["EFFDTFROM"] = dateFormat.format(new Date(currentDate));
                     oNewRow["EFFDTTO"] = dateFormat.format(new Date('9999-12-31'));
                 }                
@@ -2800,11 +2798,16 @@ sap.ui.define([
                 })
 
                 oNewRow["NEW"] = true;
+                
                 aNewRow.push(oNewRow);
 
                 this.byId(this._sActiveTable).getModel().setProperty("/rows", aNewRow);
                 this.byId(this._sActiveTable).bindRows("/rows");
                 this._dataMode = "NEW";
+
+                // var sRowPath = this.byId(this._sActiveTable).getBindingContext().sPath;
+                // this.byId(this._sActiveTable).getModel().setProperty(sRowPath + "/PURALEDIT", "1");
+                
 
                 oTable.focus();
             },
