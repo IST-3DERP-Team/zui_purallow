@@ -1044,6 +1044,7 @@ sap.ui.define([
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel().getData().rows;
                     var vEntitySet = "";
+                    var param = [];
     
                     if (this._sActiveTable === "headerTab") vEntitySet = "HeaderSet(";
                     else vEntitySet = "DetailSet(";
@@ -1109,8 +1110,8 @@ sap.ui.define([
                                         if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                         entitySet += ")";
                     
-                                        // console.log(entitySet);
-                                        // console.log(param);
+                                        console.log(entitySet);
+                                        console.log(param);
                                         me._oModel.remove("/" + encodeURIComponent(entitySet), mParameters);
                                     })
                 
